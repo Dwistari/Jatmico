@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.detail_isues.DetailActivity" android:orientation="horizontal">
+
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_detail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/deep_rose"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <TextView
+            android:id="@+id/title_isues"
+            android:layout_below="@id/toolbar_detail"
+            android:textSize="24sp"
+            android:text="Title Isues"
+            android:layout_marginBottom="41dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <TextView
+            android:id="@+id/user"
+            android:layout_below="@id/title_isues"
+            android:textSize="12sp"
+            android:text="Title Isues"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:id="@+id/time"
+            android:layout_toEndOf="@id/user"
+            android:layout_below="@id/title_isues"
+            android:layout_marginStart="10dp"
+            android:textSize="12sp"
+            android:text="00.00"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <ImageView
+            android:id="@+id/detail_image"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/user"
+            android:src="@mipmap/ic_launcher"
+            android:layout_width="340dp"
+            android:layout_height="170dp"/>
+
+    <TextView
+            android:id="@+id/descripsion"
+            android:text="description"
+            android:gravity="center"
+            android:layout_below="@id/detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="152dp"/>
+
+    <LinearLayout
+            android:id="@+id/loadings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white_three"
+            android:gravity="center"
+            android:visibility="gone">
+
+        <ProgressBar android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <ImageView
+            android:id="@+id/upload_link"
+            android:src="@drawable/ic_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="41dp"/>
+
+    <TextView
+            android:id="@+id/link"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/link"
+            android:textColor="#2566f2"
+            android:textSize="12sp"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@+id/upload_link"
+            android:layout_marginStart="53dp" android:layout_marginBottom="1dp"/>
+
+
+
+</RelativeLayout>

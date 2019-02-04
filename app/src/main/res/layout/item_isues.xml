@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/item_view"
+        android:background="@drawable/border"
+        android:weightSum="5"
+        android:layout_below="@+id/atas"
+        android:layout_gravity="center"
+        android:layout_width="336dp"
+        android:layout_height="93dp"
+        android:layout_marginTop="24dp">
+
+
+    <TextView
+            android:id="@+id/bug_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bug name"
+            android:textStyle="bold"/>
+    <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="time"
+            android:layout_alignEnd="@id/bug_name"
+            android:layout_marginEnd="-230dp"/>
+
+    <TextView
+            android:id="@+id/descripsion"
+            android:layout_below="@id/bug_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla"/>
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_user"
+            android:layout_below="@id/descripsion"
+            android:layout_width="50dp"
+            android:layout_height="86dp"
+            android:src="@drawable/profil"
+            app:civ_border_width="1dp"
+            app:civ_border_color="#FFF"
+            android:layout_alignParentStart="true"/>
+
+    <TextView
+            android:id="@+id/name_user"
+            android:layout_below="@id/descripsion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You"
+            android:textStyle="bold"
+            android:layout_marginTop="3dp"
+            android:layout_toEndOf="@+id/profile_user"/>
+
+    <Button
+            android:id="@+id/severity"
+            android:layout_below="@id/descripsion"
+            android:text="Severity"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            android:layout_width="48dp"
+            android:layout_height="16dp"
+            android:background="#4ca38b"
+            android:gravity="center"
+            android:layout_marginTop="7dp"
+            android:layout_marginLeft="100dp"
+            android:layout_toEndOf="@+id/name_user"/>
+</RelativeLayout>

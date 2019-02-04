@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="deep_rose">#c9435d</color>
+    <color name="deep_rosse2">#c8425c</color>
+    <color name="velvet">#6b0b41</color>
+    <color name="white_three">#f3f3f3</color>
+    <color name="trans">#7F000000</color>
+
+
+</resources>
