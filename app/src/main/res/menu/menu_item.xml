@@ -7,12 +7,14 @@
             android:id="@+id/filter"
             android:orderInCategory="100"
             android:title="Filter"
+            android:icon="@drawable/ic_filter"
             app:showAsAction="never" />
 
     <item
             android:id="@+id/sort_by"
             android:orderInCategory="100"
             android:title="Sort By"
+            android:icon="@drawable/ic_sort_by"
             app:showAsAction="never" />
     <item
             android:id="@+id/action_search"

@@ -48,7 +48,6 @@ class IsuesActivity : AppCompatActivity(), IsuesView {
     private lateinit var presenter: IsuesPresenter
 
     private var project_id = 0
-   // private var position : Int? = null
     private var page = 1
     private var per_page = 20
 

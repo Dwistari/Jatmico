@@ -13,6 +13,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.dwi.jatmico.R
+import com.example.dwi.jatmico.R.string.access_token
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.presenter.SubPresenter
@@ -20,10 +21,8 @@ import com.example.dwi.jatmico.presenter.SubPresenterImp
 import com.example.dwi.jatmico.view.detail_isues.DetailActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
 import kotlinx.android.synthetic.main.activity_submission.*
-import okhttp3.MediaType
-import okhttp3.RequestBody
 
-class SubActivity : AppCompatActivity()  , SubView {
+class SubActivity : AppCompatActivity(), SubView {
 
     var ProjectNames: MutableList<String>? = null
 
@@ -45,7 +44,7 @@ class SubActivity : AppCompatActivity()  , SubView {
         adapter.setData(submission)
     }
 
-    //--SPINNER SHOW DATA
+    //--SPINNER SHOW DATA Project
     override fun showsData(projects: MutableList<Project>) {
         Log.d("Show_Project", projects.size.toString())
 
@@ -54,10 +53,13 @@ class SubActivity : AppCompatActivity()  , SubView {
         ProjectNames = ArrayList()
         for (project in projects) {
             ProjectNames?.add(project.name)
+
+//         Picasso.with(ProjectNames?.getContext()).load(project[position].project.image.url)
+//            .into(itemView?.profile_user)
         }
         // Initializing an ArrayAdapter
         val spinnerArrayAdapter = object : ArrayAdapter<String>(
-            this, R.layout.spinner_item,R.id.item_spiner, ProjectNames
+            this, R.layout.spinner_item, R.id.item_spiner, ProjectNames
         ) {
 
             override fun getDropDownView(
@@ -79,19 +81,37 @@ class SubActivity : AppCompatActivity()  , SubView {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                intent.putExtra("select_project",projects[position].id )
+
+//                if (projects[position].id == 1 ) {
+//                    showData()
+//                }else
+//                    if(projects[position].id == 2){
+//                        showsData()
+//                    }
+
+                spinnerArrayAdapter.notifyDataSetChanged()
+
+                select_project.getItemAtPosition(position).toString()
+//                presenter.getIsues(projects[position].id, page, per_page,access_token)
 
             }
 
         }
     }
 
+//    private fun shortById() {
+//        if (project_id)
+//
+//    }
+
 
     private lateinit var adapter: SubAdapter
     private lateinit var presenter: SubPresenter
 
+    var access_token = ""
+    private var sort_by_id = 0
     private var project_id = 0
-    private var position : Int? = null
+    private var position: Int? = null
     private var page = 1
     private var per_page = 20
 
@@ -103,13 +123,15 @@ class SubActivity : AppCompatActivity()  , SubView {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initPresenter()
         initRecylerView()
-        project_id = intent.getIntExtra("select_project", project_id)
+        position = intent.getIntExtra("position", 0)
 
         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-            presenter.getSub(page, per_page, sp.getString(getString(R.string.access_token), "")!!)
-            presenter.getProjects(page, per_page, sp.getString(getString(R.string.access_token), "")!!)
+            access_token = sp.getString(getString(R.string.access_token), "")
 
         }
+        presenter.getSub(page, per_page, access_token)
+
+        presenter.getProjects(page, per_page, access_token)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -118,10 +140,9 @@ class SubActivity : AppCompatActivity()  , SubView {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_item,menu)
+        menuInflater.inflate(R.menu.menu_item, menu)
         return true
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
@@ -152,7 +173,7 @@ class SubActivity : AppCompatActivity()  , SubView {
         adapter = SubAdapter()
         adapter.listener = object : SubAdapter.Listener {
 
-            override fun onClickItem(submission: Isues, position : Int) {
+            override fun onClickItem(submission: Isues, position: Int) {
                 val intent = Intent(this@SubActivity, DetailActivity::class.java)
                 intent.putExtra("issue_id", submission.id)
                 intent.putExtra("position", position)
@@ -161,7 +182,7 @@ class SubActivity : AppCompatActivity()  , SubView {
 
             }
         }
-       card_recycler_view.adapter = adapter
+        card_recycler_view.adapter = adapter
     }
 
     private fun initPresenter() {

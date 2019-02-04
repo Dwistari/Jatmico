@@ -6,7 +6,7 @@ import io.reactivex.Observable
 
 
 class ProjectInteractor {
-    fun getHome(page: Int, perPage: Int, token: String): Observable<ProjectResponse> {
+    fun getHome(page: Int, perPage: Int, token: String?): Observable<ProjectResponse> {
         return api.getProjects(token,page,perPage)
     }
 

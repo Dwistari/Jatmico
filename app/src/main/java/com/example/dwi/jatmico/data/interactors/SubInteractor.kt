@@ -5,7 +5,7 @@ import com.example.dwi.jatmico.data.models.IsuesResponse
 import io.reactivex.Observable
 
 class SubInteractor {
-    fun getSub ( page : Int, per_page : Int, token: String ): Observable<IsuesResponse> {
+    fun getSub ( page : Int, per_page : Int, token: String? ): Observable<IsuesResponse> {
         return api.getSub (token  , page , per_page)
     }
 
