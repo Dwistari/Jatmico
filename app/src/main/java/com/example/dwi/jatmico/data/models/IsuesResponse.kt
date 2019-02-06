@@ -42,7 +42,7 @@ class IsuesResponse (
         var id: Int,
         @SerializedName("project_id")
         @Expose
-        var projectId: String,
+        var projectId: Int,
         @SerializedName("user")
         @Expose
         var user: User,

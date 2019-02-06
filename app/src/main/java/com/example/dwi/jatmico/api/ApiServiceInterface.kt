@@ -81,8 +81,12 @@ interface ApiServiceInterface {
         @Path("id") isues_id: String?,
         @Query("access_token") accessToken: String?
 
-
     ): Observable<ResponseBody>
+
+    @GET("api/v1/severities ")
+    fun getSeverity(
+        @Query("access_token") accessToken: String?
+    ): Observable<Severity>
 
 
 

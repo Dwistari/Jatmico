@@ -35,6 +35,8 @@ class SubAdapter  : RecyclerView.Adapter<SubAdapter.SubViewHolder>() {
         Picasso.with(holder.itemView?.getContext()).load(submission[position].user.image.url)
             .into(holder.itemView?.profile_user)
 
+
+
 //// ---Show detail isues--
 
         holder.itemView.setOnClickListener {

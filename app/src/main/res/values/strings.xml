@@ -12,4 +12,10 @@
     <string-array name="select_project">
         <item>Select Project</item>
     </string-array>
+
+    <string-array name="severity">
+        <item>CRITICAL</item>
+        <item>MAJOR</item>
+        <item>MONOR</item>
+    </string-array>
 </resources>

@@ -49,7 +49,10 @@ class SubPresenterImp : SubPresenter {
             ?.subscribe(
                 {
                     view?.dismissLoading()
-                    view?.showsData(it.projects)
+                    if(it.projects.size !=0){
+                        view?.showsData(it.projects)
+                    }
+
                 },
                 {
                     view?.showErrorAlert(it)
@@ -58,6 +61,25 @@ class SubPresenterImp : SubPresenter {
             )
     }
 
+//    override fun getSeverity(token: String) {
+//        view?.showLoading()
+//        interactors?.getSeverity( token)
+//            ?.subscribeOn(Schedulers.io())
+//            ?.observeOn(AndroidSchedulers.mainThread())
+//            ?.subscribe(
+//                {
+//                    view?.dismissLoading()
+//                    if(it.projects.size !=0){
+//                        view?.showsData(it.projects)
+//                    }
+//
+//                },
+//                {
+//                    view?.showErrorAlert(it)
+//                    view?.dismissLoading()
+//                }
+//            )
+//    }
     private var view: SubView? = null
     private var interactor: SubInteractor? = SubInteractor()
     private var interactors: ProjectInteractor? = ProjectInteractor()

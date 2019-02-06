@@ -9,4 +9,5 @@ interface SubView {
     fun showErrorAlert(it: Throwable)
     fun showData(isues: MutableList<Isues>)
     fun showsData(projects: MutableList<Project>)
+//    fun getSeverity()
 }

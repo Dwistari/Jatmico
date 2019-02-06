@@ -1,8 +1,10 @@
 package com.example.dwi.jatmico.view.my_submission
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
@@ -13,7 +15,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.dwi.jatmico.R
-import com.example.dwi.jatmico.R.string.access_token
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.presenter.SubPresenter
@@ -25,6 +26,8 @@ import kotlinx.android.synthetic.main.activity_submission.*
 class SubActivity : AppCompatActivity(), SubView {
 
     var ProjectNames: MutableList<String>? = null
+    var sort_id : Int? = null
+    var submissionData : MutableList<Isues>? =null
 
     override fun showLoading() {
         loading.visibility = View.VISIBLE
@@ -41,13 +44,16 @@ class SubActivity : AppCompatActivity(), SubView {
 
     override fun showData(submission: MutableList<Isues>) {
         Log.d("data_size", submission.size.toString())
-        adapter.setData(submission)
+        submissionData = submission
+        adapter.setData(filterSubmission(submission))
     }
 
     //--SPINNER SHOW DATA Project
     override fun showsData(projects: MutableList<Project>) {
         Log.d("Show_Project", projects.size.toString())
 
+        sort_id = projects.get(0).id
+        submissionData?.let { adapter.setData(filterSubmission(it)) }
         adapter.setsData(projects)
 
         ProjectNames = ArrayList()
@@ -81,36 +87,45 @@ class SubActivity : AppCompatActivity(), SubView {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
+                select_project.getItemAtPosition(position).toString()
+//                presenter.getIsues(projects[position].id, page, per_page,access_token)
 
-//                if (projects[position].id == 1 ) {
-//                    showData()
-//                }else
-//                    if(projects[position].id == 2){
-//                        showsData()
-//                    }
+//                Toast.makeText(this@SubActivity,id.toString(),Toast.LENGTH_SHORT).show()
+                sort_id = projects.get(position).id
+                submissionData?.let { adapter.setData(filterSubmission(it)) }
 
                 spinnerArrayAdapter.notifyDataSetChanged()
 
-                select_project.getItemAtPosition(position).toString()
-//                presenter.getIsues(projects[position].id, page, per_page,access_token)
 
             }
 
         }
     }
 
-//    private fun shortById() {
-//        if (project_id)
-//
-//    }
+    private fun filterSubmission(submission: MutableList<Isues>): MutableList<Isues>{
+        var filteredSubmission : MutableList<Isues> = ArrayList()
+        if (sort_id != null){
+
+            submission.forEach {
+                Log.d("filter", "sub id: ${it.id}" )
+
+                if (it.projectId == sort_id){
+                    filteredSubmission.add(it)
+                }
+            }
+            return filteredSubmission
+        }else{
+            return submission
+        }
+
+
+    }
 
 
     private lateinit var adapter: SubAdapter
     private lateinit var presenter: SubPresenter
 
     var access_token = ""
-    private var sort_by_id = 0
-    private var project_id = 0
     private var position: Int? = null
     private var page = 1
     private var per_page = 20
@@ -155,8 +170,25 @@ class SubActivity : AppCompatActivity(), SubView {
             return true
         }
         if (id == R.id.filter) {
-            Toast.makeText(this, "Item Two Clicked", Toast.LENGTH_LONG).show()
-            return true
+//            val builder = AlertDialog.Builder(this)
+//            builder.setTitle("Severity")
+//            builder.setSingleChoiceItems(R.array.severity) { dialog, which ->
+//
+//                getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
+//                    presenter.delIssues( sp.getString(getString(R.string.access_token), "")!!)
+//
+//                }
+//
+//
+//            builder.setNegativeButton("CANCEL") { dialog, which ->
+//                        // FIRE ZE MISSILES!
+//                    }
+//
+//            // Create the AlertDialog object and return it
+//            val dialog: AlertDialog? = builder.create()
+//            dialog?.show()
+
+
         }
         if (id == R.id.sort_by) {
             Toast.makeText(this, "Item Three Clicked", Toast.LENGTH_LONG).show()
@@ -209,3 +241,4 @@ class SubActivity : AppCompatActivity(), SubView {
         }
     }
 }
+
