@@ -9,6 +9,5 @@ interface CreateView {
     fun dismissLoading()
     fun showErrorAlert(it: Throwable)
     fun showData(projects: MutableList<Project>)
-    fun onSuccess()
 
 }

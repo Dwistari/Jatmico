@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
+import com.example.dwi.jatmico.data.models.Severitys
 import com.example.dwi.jatmico.view.detail_isues.DetailActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
@@ -15,6 +16,7 @@ import kotlinx.android.synthetic.main.item_isues.view.*
 class SubAdapter  : RecyclerView.Adapter<SubAdapter.SubViewHolder>() {
     private var submission: MutableList<Isues> = ArrayList()
     private var project: MutableList<Project> = ArrayList()
+    private var severity: MutableList<Severitys> = ArrayList()
     var listener: Listener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubViewHolder {
@@ -35,9 +37,7 @@ class SubAdapter  : RecyclerView.Adapter<SubAdapter.SubViewHolder>() {
         Picasso.with(holder.itemView?.getContext()).load(submission[position].user.image.url)
             .into(holder.itemView?.profile_user)
 
-
-
-//// ---Show detail isues--
+// ---Show detail isues--
 
         holder.itemView.setOnClickListener {
             listener?.onClickItem(submission[position], position)
@@ -69,4 +69,10 @@ class SubAdapter  : RecyclerView.Adapter<SubAdapter.SubViewHolder>() {
         submission.removeAt(position)
         notifyItemRemoved(position)
     }
+
+    fun setSeverity(severity: MutableList<Severitys>) {
+        this.severity = severity
+        notifyDataSetChanged()
+    }
+
 }

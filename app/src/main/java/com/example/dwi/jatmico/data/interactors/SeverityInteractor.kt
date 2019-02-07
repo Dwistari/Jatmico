@@ -1,13 +1,13 @@
-//package com.example.dwi.jatmico.data.interactors
-//
-//import com.example.dwi.jatmico.api.ApiServiceInterface
-//import com.example.dwi.jatmico.data.models.SeverityResponse
-//import java.util.*
-//
-//class SeverityInteractor {
-//    fun getSearch (token: String ): Observable<SeverityResponse> {
-//        return api.getSearch (token )
-//    }
-//
-//    private var api: ApiServiceInterface = ApiServiceInterface.create()
-//}
+package com.example.dwi.jatmico.data.interactors
+
+import com.example.dwi.jatmico.api.ApiServiceInterface
+import com.example.dwi.jatmico.data.models.SeverityResponse
+import io.reactivex.Observable
+
+class SeverityInteractor {
+    fun getSeverity (token: String ): Observable<SeverityResponse> {
+        return api.getSeverity(token)
+    }
+
+    private var api: ApiServiceInterface = ApiServiceInterface.create()
+}

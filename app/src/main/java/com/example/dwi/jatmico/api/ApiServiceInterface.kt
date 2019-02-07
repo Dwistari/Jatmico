@@ -71,6 +71,8 @@ interface ApiServiceInterface {
     @GET("api/v1/me/submission ")
     fun getSub(
         @Query("access_token") accessToken: String?,
+        @Query("sort_by") sortBy : String?,
+        @Query("q[severity_id_eq]") sortSeverity : Int?,
         @Query("page") page: Int?,
         @Query("per_page") per_page: Int?
 
@@ -86,7 +88,7 @@ interface ApiServiceInterface {
     @GET("api/v1/severities ")
     fun getSeverity(
         @Query("access_token") accessToken: String?
-    ): Observable<Severity>
+    ): Observable<SeverityResponse>
 
 
 

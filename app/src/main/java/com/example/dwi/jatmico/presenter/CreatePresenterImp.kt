@@ -27,7 +27,6 @@ class CreatePresenterImp : CreatePresenter {
             ?.subscribe(
                 {
                     view?.dismissLoading()
-                    view?.onSuccess()
                 },
                 {
                     view?.showErrorAlert(it)

@@ -56,15 +56,6 @@ class CreateActivity : AppCompatActivity(), CreateView {
         Toast.makeText(this@CreateActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onSuccess() {
-
-//        if(response.isSuccessful()) {
-//            showResponse(response.body().toString());
-//            Log.i("PostActivity", "post submitted to API." + response.body().toString());
-//        }
-
-
-    }
 
 
     //--SPINNER SHOW DATA
