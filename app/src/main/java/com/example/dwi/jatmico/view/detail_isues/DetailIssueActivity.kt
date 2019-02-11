@@ -99,7 +99,8 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
             builder.setPositiveButton("YES") { dialog, which ->
 
                 getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-                    issuePresenter.delIssues(isues_id.toString(), sp.getString(getString(R.string.access_token), "")!!)
+                    issuePresenter.delIssues(isues_id.toString(),
+                        sp.getString(getString(R.string.access_token), "")!!)
 
 
                 }

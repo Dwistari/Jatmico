@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/gadient"
-        tools:context=".issueView.login.LoginActivity">
+        tools:context=".view.login.LoginActivity">
 
     <ImageView
             android:id="@+id/background_logo"
@@ -28,7 +28,7 @@
     <TextView
             android:id="@+id/name_icon"
             android:paddingTop="20dp"
-            android:layout_below="@+id/icon"
+            android:layout_below="@id/icon"
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

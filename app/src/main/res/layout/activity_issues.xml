@@ -5,7 +5,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white_three"
-        tools:context=".issueView.isues.IsuesActivity">
+        tools:context=".view.isues.IssuesActivity"
+        tools:ignore="MissingDefaultResource">
 
 
     <android.support.v7.widget.Toolbar

@@ -65,21 +65,7 @@ class IsuesResponse (
         @Expose
         var updated_at : String
     )
-        data class Severity(
-        @SerializedName("id")
-        @Expose
-        var id: Int,
-        @SerializedName("name")
-        @Expose
-        var name: String,
-        @SerializedName("level")
-        @Expose
-        var level: Int,
-        @SerializedName("color")
-        @Expose
-        var color: String
-        )
-
+        
     data class ThumbIsues(
         @SerializedName("url")
         @Expose

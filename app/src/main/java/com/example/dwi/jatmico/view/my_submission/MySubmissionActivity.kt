@@ -17,7 +17,7 @@ import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
-import com.example.dwi.jatmico.data.models.Severitys
+import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
 import kotlinx.android.synthetic.main.activity_my_submission.*
@@ -27,9 +27,9 @@ import kotlin.collections.ArrayList
 class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
     private var sortId: Int? = null
-    private  var severityId: Int? = null
+    private var severityId: Int? = null
     private var projectNames: MutableList<String>? = null
-    private var severities: MutableList<Severitys>? = ArrayList()
+    private var severities: MutableList<Severity>? = ArrayList()
     private var severitiesNames: MutableList<String>? = ArrayList()
     private var submissionData: MutableList<Isues>? = null
     private var sort = arrayOf("New", "OLD", "Most", "Less")
@@ -56,10 +56,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     }
 
     //show severities data
-    override fun showSeverity(severities: MutableList<Severitys>) {
-//        val dialog: AlertDialog?
-//        severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
-        submissionData?.let { adapter.setData(filterSeverity(it)) }
+    override fun showSeverity(severities: MutableList<Severity>) {
         this.severities?.addAll(severities)
         adapter.setSeverity(severities)
 
@@ -68,11 +65,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                 severitiesNames?.add(item.name)
             }
         }
-
-//        severitiesNames = ArrayList()
-//        for (severity in severities) {
-//            severitiesNames?.add(severity.name)
-//        }
 
     }
 
@@ -182,6 +174,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     var access_token = ""
     private var position: Int? = null
     private var project_id = 0
+    private var sub_id = 0
     private var page = 1
     private var per_page = 20
 
@@ -223,7 +216,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         if (id == R.id.action_search) {
 
             val intent = Intent(this@MySubmissionActivity, SearchActivity::class.java)
-            intent.putExtra("sub_id", project_id)
+            intent.putExtra("sub_id", sub_id)
             startActivity(intent)
             return true
         }
@@ -235,16 +228,12 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
             builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1, null)
 
 
-            builder.setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
+            builder.setPositiveButton("OK") { dialog, which ->
+                severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
 
-                    submissionData?.let { adapter.setData(filterSeverity(it)) }
+                submissionData?.let { adapter.setData(filterSeverity(it)) }
 
-//                    Toast.makeText(this@MySubmissionActivity, severityId.toString(), Toast.LENGTH_SHORT).show()
-                }
-
-            })
+            }
 
             builder.setNegativeButton("CANCEL") { dialog, which ->
                 dialog.dismiss()
@@ -256,28 +245,21 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         }
 
         if (id == R.id.sort_by) {
-
+//          val dialog: AlertDialog?
             val builder = AlertDialog.Builder(this)
-            builder.setTitle("Severity")
-            builder.setSingleChoiceItems(sort, -1, null)
+            builder.setItems(sort) { dialog, position: Int  ->
 
 
-            builder.setPositiveButton("OK") { dialog, id ->
 
-                Toast.makeText(this, "Its toast!", Toast.LENGTH_SHORT).show()
 
-            }
-
-            builder.setNegativeButton("CANCEL") { dialog, which ->
-                dialog.dismiss()
             }
 
 
             val dialog: AlertDialog? = builder.create()
             dialog?.show()
 
-        }
 
+        }
         return super.onOptionsItemSelected(item)
 
     }
@@ -324,4 +306,3 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         }
     }
 }
-

@@ -7,14 +7,14 @@ import android.view.ViewGroup
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
-import com.example.dwi.jatmico.data.models.Severitys
+import com.example.dwi.jatmico.data.models.Severity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 
 class MySubmissionAdapter  : RecyclerView.Adapter<MySubmissionAdapter.SubViewHolder>() {
     private var submission: MutableList<Isues> = ArrayList()
     private var project: MutableList<Project> = ArrayList()
-    private var severity: MutableList<Severitys> = ArrayList()
+    private var severity: MutableList<Severity> = ArrayList()
     var listener: Listener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubViewHolder {
@@ -66,7 +66,7 @@ class MySubmissionAdapter  : RecyclerView.Adapter<MySubmissionAdapter.SubViewHol
     }
 
 //show severity
-    fun setSeverity(severities: MutableList<Severitys>) {
+    fun setSeverity(severities: MutableList<Severity>) {
         this.severity = severities
         notifyDataSetChanged()
     }

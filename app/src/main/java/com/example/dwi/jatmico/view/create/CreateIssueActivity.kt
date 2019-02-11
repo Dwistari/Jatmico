@@ -160,11 +160,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
         }
 
-        val filter = when (radio_grup.checkedRadioButtonId) {
-            R.id.radio_critical -> severity_id = RequestBody.create(MediaType.parse("text/plain"), 1.toString())
-            R.id.radio_minor -> severity_id = RequestBody.create(MediaType.parse("text/plain"), 2.toString())
-            else -> severity_id = RequestBody.create(MediaType.parse("text/plain"), 3.toString())
-        }
+        radio_grup.check(R.id.radio_critical)
 
 
 //---Button Image--//
@@ -178,6 +174,12 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
             override fun onClick(v: View?) {
 
+                when (radio_grup.checkedRadioButtonId) {
+                    R.id.radio_critical -> severity_id = RequestBody.create(MediaType.parse("text/plain"),"1")
+                    R.id.radio_minor -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "2")
+                    else -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "3")
+
+                }
 
                 if (input_title.text.toString().equals("") || input_description.text.toString().equals("") ||
                     input_link.text.toString().equals("")

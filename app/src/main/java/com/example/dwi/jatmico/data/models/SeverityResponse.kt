@@ -6,9 +6,9 @@ import com.google.gson.annotations.SerializedName
 class SeverityResponse (
     @SerializedName("response")
     @Expose
-    var severity: MutableList<Severitys>
+    var severity: MutableList<Severity>
 )
-data class Severitys(
+data class Severity(
     @SerializedName("id")
     @Expose
     var id: Int,
