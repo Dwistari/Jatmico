@@ -80,6 +80,11 @@ class HomeActivity : AppCompatActivity(), HomeView {
         presenter = HomePresenterImp()
         presenter.initView(this)
     }
+
+    override fun onDestroy() {
+        presenter.detach()
+        super.onDestroy()
+    }
 }
 
 

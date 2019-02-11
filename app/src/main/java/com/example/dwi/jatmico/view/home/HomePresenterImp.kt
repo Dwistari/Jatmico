@@ -58,4 +58,7 @@ class HomePresenterImp : HomePresenter {
         this.view = view
     }
 
+    override fun detach() {
+        disposables.clear()
+    }
 }
