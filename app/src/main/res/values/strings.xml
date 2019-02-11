@@ -3,11 +3,7 @@
     <string name="access_token">access_token</string>
     <string name="refresh_token">refresh_token</string>
     <string name="mysubmission">My Submission</string>
-    <string name="link">
-        <a href="https://apkpure.com/id/opinium/com.extrainteger
-.opinium">https://apkpure.com/id/opinium/com.extrainteger
-            .opinium
-        </a>   </string>
+
 
     <string-array name="select_project">
         <item>Select Project</item>
