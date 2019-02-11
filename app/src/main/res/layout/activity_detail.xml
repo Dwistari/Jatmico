@@ -84,6 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#2566f2"
+            android:text="https://opinium.com"
             android:textSize="12sp"
             android:layout_alignParentStart="true"
             android:layout_alignBottom="@+id/upload_link"

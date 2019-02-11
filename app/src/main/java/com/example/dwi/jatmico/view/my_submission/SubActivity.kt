@@ -31,7 +31,7 @@ import kotlin.collections.ArrayList
 class SubActivity : AppCompatActivity(), SubView {
 
     private var sortId: Int? = null
-    var severityId: Int? = null
+    private  var severityId: Int? = null
     private var projectNames: MutableList<String>? = null
     private var severities: MutableList<Severitys>? = ArrayList()
     private var severitiesNames: MutableList<String>? = ArrayList()
@@ -81,8 +81,6 @@ class SubActivity : AppCompatActivity(), SubView {
     }
 
     override fun showsProject(projects: MutableList<Project>) {
-//        Log.d("Show_Project", projects.size.toString())
-
         sortId = projects.get(0).id
         submissionData?.let { adapter.setData(filterSubmission(it)) }
 
@@ -121,8 +119,8 @@ class SubActivity : AppCompatActivity(), SubView {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-//                select_project.getItemAtPosition(position).toString()
-//
+                select_project.getItemAtPosition(position).toString()
+
                 sortId = projects.get(position).id
                 submissionData?.let { adapter.setData(filterSubmission(it)) }
 
