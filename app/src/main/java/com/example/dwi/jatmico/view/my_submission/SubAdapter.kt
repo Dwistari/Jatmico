@@ -1,6 +1,5 @@
 package com.example.dwi.jatmico.view.my_submission
 
-import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +7,8 @@ import android.view.ViewGroup
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
+import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.data.models.Severitys
-import com.example.dwi.jatmico.view.detail_isues.DetailActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 
@@ -55,24 +54,30 @@ class SubAdapter  : RecyclerView.Adapter<SubAdapter.SubViewHolder>() {
         fun onClickItem(isues: Isues, position: Int)
     }
 
-
+//show isues
     fun setData(submission: MutableList<Isues>) {
         this.submission = submission
         notifyDataSetChanged()
     }
 
-    fun setsData(project: MutableList<Project>) {
+//show project
+    fun setProject(project: MutableList<Project>) {
         this.project = project
         notifyDataSetChanged()
     }
+
+//show severity
+    fun setSeverity(severities: MutableList<Severitys>) {
+        this.severity = severities
+        notifyDataSetChanged()
+    }
+
     fun deleteItem(position: Int) {
         submission.removeAt(position)
         notifyItemRemoved(position)
     }
 
-    fun setSeverity(severity: MutableList<Severitys>) {
-        this.severity = severity
-        notifyDataSetChanged()
-    }
+
+
 
 }

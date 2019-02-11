@@ -27,9 +27,9 @@ class SubPresenterImp : SubPresenter {
                 }
             )
     }
-    override fun getSub ( sortBy : String, sortSeverity :Int, page : Int,per_page : Int, token: String) {
+    override fun getSub (  page : Int,per_page : Int, token: String) {
         view?.showLoading()
-        interactor?.getSub( sortBy, sortSeverity,  page , per_page,token)
+        interactor?.getSub( page , per_page,token)
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
@@ -53,7 +53,7 @@ class SubPresenterImp : SubPresenter {
                 {
                     view?.dismissLoading()
                     if(it.projects.size !=0){
-                        view?.showsData(it.projects)
+                        view?.showsProject(it.projects)
                     }
 
                 },

@@ -22,16 +22,21 @@ import com.example.dwi.jatmico.presenter.SubPresenter
 import com.example.dwi.jatmico.presenter.SubPresenterImp
 import com.example.dwi.jatmico.view.detail_isues.DetailActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_submission.*
+import kotlinx.android.synthetic.main.spinner_item.*
+import kotlin.collections.ArrayList
+
 
 class SubActivity : AppCompatActivity(), SubView {
 
-    var ProjectNames: MutableList<String>? = null
-    var SeverityNames: MutableList<String>? = ArrayList()
-    var sort_id: Int? = null
-    var submissionData: MutableList<Isues>? = null
-    var severityData: MutableList<Severitys>? = null
-    var sort = arrayOf("New", "OLD", "Most", "Less")
+    private var sortId: Int? = null
+    var severityId: Int? = null
+    private var projectNames: MutableList<String>? = null
+    private var severities: MutableList<Severitys>? = ArrayList()
+    private var severitiesNames: MutableList<String>? = ArrayList()
+    private var submissionData: MutableList<Isues>? = null
+    private var sort = arrayOf("New", "OLD", "Most", "Less")
 
 
     override fun showLoading() {
@@ -51,38 +56,50 @@ class SubActivity : AppCompatActivity(), SubView {
         Log.d("data_size", submission.size.toString())
         submissionData = submission
         adapter.setData(filterSubmission(submission))
+        adapter.setData(filterSeverity(submission))
     }
 
-    //show severityName data
-    override fun showSeverity(severityName: MutableList<Severitys>) {
-        severityData = severityName
-        severityName.forEachIndexed { i, item ->
-            if (i<3) {
-                SeverityNames?.add(item.name)
+    //show severities data
+    override fun showSeverity(severities: MutableList<Severitys>) {
+//        val dialog: AlertDialog?
+//        severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
+        submissionData?.let { adapter.setData(filterSeverity(it)) }
+        this.severities?.addAll(severities)
+        adapter.setSeverity(severities)
+
+        severities.forEachIndexed { i, item ->
+            if (i < 3) {
+                severitiesNames?.add(item.name)
             }
         }
-        adapter.setSeverity(severityName)
+
+//        severitiesNames = ArrayList()
+//        for (severity in severities) {
+//            severitiesNames?.add(severity.name)
+//        }
 
     }
 
-    //--SPINNER SHOW DATA Project
-    override fun showsData(projects: MutableList<Project>) {
-        Log.d("Show_Project", projects.size.toString())
+    override fun showsProject(projects: MutableList<Project>) {
+//        Log.d("Show_Project", projects.size.toString())
 
-        sort_id = projects.get(0).id
+        sortId = projects.get(0).id
         submissionData?.let { adapter.setData(filterSubmission(it)) }
-        adapter.setsData(projects)
 
-        ProjectNames = ArrayList()
+        adapter.setProject(projects)
+
+        projectNames = ArrayList()
         for (project in projects) {
-            ProjectNames?.add(project.name)
+            projectNames?.add(project.name)
 
-//         Picasso.with(ProjectNames?.getContext()).load(project[position].project.image.url)
-//            .into(itemView?.profile_user)
+//         Picasso.with(projectNames?.).load(project.image).project.image.url)
+//            .into(R.layout.spinner_item,R.id.icon_project)
+//            Picasso.with(this).load(project.image?.url).into(icon_project)
         }
+
         // Initializing an ArrayAdapter
         val spinnerArrayAdapter = object : ArrayAdapter<String>(
-            this, R.layout.spinner_item, R.id.item_spiner, ProjectNames
+            this, R.layout.spinner_item, R.id.item_spiner, projectNames
         ) {
 
             override fun getDropDownView(
@@ -104,9 +121,9 @@ class SubActivity : AppCompatActivity(), SubView {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                select_project.getItemAtPosition(position).toString()
-//                presenter.getIsues(projects[position].id, page, per_page,access_token)
-                sort_id = projects.get(position).id
+//                select_project.getItemAtPosition(position).toString()
+//
+                sortId = projects.get(position).id
                 submissionData?.let { adapter.setData(filterSubmission(it)) }
 
                 spinnerArrayAdapter.notifyDataSetChanged()
@@ -117,14 +134,18 @@ class SubActivity : AppCompatActivity(), SubView {
     }
 
     private fun filterSubmission(submission: MutableList<Isues>): MutableList<Isues> {
+        Log.d("filterSubmission", submission.size.toString())
         var filteredSubmission: MutableList<Isues> = ArrayList()
-        if (sort_id != null) {
+        if (sortId != null) {
 
             submission.forEach {
                 Log.d("filter", "sub id: ${it.id}")
 
-                if (it.projectId == sort_id) {
+                if (sortId == it.projectId) {
+
                     filteredSubmission.add(it)
+
+                    Log.d("tes submission", filteredSubmission.size.toString())
                 }
             }
             return filteredSubmission
@@ -134,13 +155,39 @@ class SubActivity : AppCompatActivity(), SubView {
 
     }
 
+    private fun filterSeverity(severity: MutableList<Isues>): MutableList<Isues> {
+        Log.d("filterSeverity", severity.toString())
+
+        //NOT SHOW
+        var filterSeverity: MutableList<Isues> = ArrayList()
+        if (severityId != null) {
+
+            severity.forEach {
+                Log.d("filter", "sev id: ${it.id}")
+
+                if (severityId == it.severity.id) {
+
+
+                    filterSeverity.add(it)
+
+                    Log.d("tes Severity", filterSeverity.size.toString())
+
+                }
+
+            }
+            return filterSeverity
+        } else {
+            return severity
+
+        }
+    }
+
     private lateinit var adapter: SubAdapter
     private lateinit var presenter: SubPresenter
 
     var access_token = ""
     private var position: Int? = null
-    private var sortBy = ""
-    private var sortSeverity = 0
+    private var project_id = 0
     private var page = 1
     private var per_page = 20
 
@@ -158,10 +205,10 @@ class SubActivity : AppCompatActivity(), SubView {
             access_token = sp.getString(getString(R.string.access_token), "")
 
         }
-        presenter.getSub(sortBy,sortSeverity, page, per_page, access_token)
+//        presenter.getSub(sortBy,sortSeverity, page, per_page, access_token)
 
+        presenter.getSub(page, per_page, access_token)
         presenter.getProjects(page, per_page, access_token)
-
         presenter.getSeverity(access_token)
     }
 
@@ -182,37 +229,39 @@ class SubActivity : AppCompatActivity(), SubView {
         if (id == R.id.action_search) {
 
             val intent = Intent(this@SubActivity, SearchActivity::class.java)
+            intent.putExtra("sub_id", project_id)
             startActivity(intent)
             return true
         }
         if (id == R.id.filter) {
-            Log.d("SEVERITY",SeverityNames.toString())
+            Log.d("SEVERITY", severitiesNames.toString())
+            val dialog: AlertDialog?
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Severity")
-            builder.setSingleChoiceItems(SeverityNames?.toTypedArray(), -1, null)
-
-            DialogInterface.OnClickListener { dialogInterface: DialogInterface, which ->
-
-//                 SeverityNames.[which]
-            }
+            builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1, null)
 
 
+            builder.setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
 
-            builder.setPositiveButton("OK") { dialog, id ->
 
-                Toast.makeText(this, "Its toast!", Toast.LENGTH_SHORT).show()
+                    submissionData?.let { adapter.setData(filterSeverity(it)) }
 
-            }
+//                    Toast.makeText(this@SubActivity, severityId.toString(), Toast.LENGTH_SHORT).show()
+                }
+
+            })
 
             builder.setNegativeButton("CANCEL") { dialog, which ->
                 dialog.dismiss()
             }
 
-
-            val dialog: AlertDialog? = builder.create()
+            dialog = builder.create()
             dialog?.show()
 
         }
+
         if (id == R.id.sort_by) {
 
             val builder = AlertDialog.Builder(this)

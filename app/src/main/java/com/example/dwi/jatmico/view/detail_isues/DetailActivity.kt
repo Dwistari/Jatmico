@@ -45,6 +45,7 @@ class DetailActivity : AppCompatActivity(), DetailView {
         user.text = detail?.user?.name
         time.text = detail?.updated_at
         descripsion.text = detail?.description
+        link.text = detail?.link
 
         Picasso.with(this).load(detail?.image?.url).into(detail_image)
 

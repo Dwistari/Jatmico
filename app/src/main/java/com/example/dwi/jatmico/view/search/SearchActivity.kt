@@ -39,7 +39,6 @@ class SearchActivity : AppCompatActivity() , SearchView {
     private lateinit var presenter: SearchPresenter
 
 
-
     private var project_id = 0
     private var page = 1
     private var per_page = 10
@@ -52,7 +51,7 @@ class SearchActivity : AppCompatActivity() , SearchView {
         initPresenter()
         initRecylerView()
         project_id = intent.getIntExtra("project_id", project_id)
-
+        project_id = intent.getIntExtra("sub_id", project_id)
 
         search_isues.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

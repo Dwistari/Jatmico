@@ -68,13 +68,13 @@ class IsuesResponse (
         data class Severity(
         @SerializedName("id")
         @Expose
-        var id: String,
+        var id: Int,
         @SerializedName("name")
         @Expose
         var name: String,
         @SerializedName("level")
         @Expose
-        var level: String,
+        var level: Int,
         @SerializedName("color")
         @Expose
         var color: String

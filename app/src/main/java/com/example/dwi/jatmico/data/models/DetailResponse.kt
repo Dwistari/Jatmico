@@ -55,6 +55,9 @@ data  class Detail(
     @SerializedName("severity")
     @Expose
     var severity: SeverityDetail,
+    @SerializedName("link")
+    @Expose
+    var link: String,
     @SerializedName("image")
     @Expose
     var image: ImageDetail,

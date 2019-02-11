@@ -28,12 +28,10 @@ import java.io.File
 import java.io.IOException
 import android.widget.ArrayAdapter
 import android.util.Log
-import com.example.dwi.jatmico.Constants
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.presenter.CreatePresenter
 import com.example.dwi.jatmico.presenter.CreatePresenterImp
 import com.example.dwi.jatmico.view.home.HomeAdapter
-import okhttp3.ResponseBody
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.util.*
@@ -41,7 +39,7 @@ import java.util.*
 
 class CreateActivity : AppCompatActivity(), CreateView {
 
-    var ProjectNames: MutableList<String>? = null
+    var projectNames: MutableList<String>? = null
     override fun showLoading() {
         loading.visibility = View.GONE
     }
@@ -64,13 +62,13 @@ class CreateActivity : AppCompatActivity(), CreateView {
 
         adapter.setData(projects)
 
-        ProjectNames = ArrayList()
+        projectNames = ArrayList()
         for (project in projects) {
-            ProjectNames?.add(project.name)
+            projectNames?.add(project.name)
         }
         // Initializing an ArrayAdapter
         val spinnerArrayAdapter = object : ArrayAdapter<String>(
-            this, R.layout.spinner_item,R.id.item_spiner, ProjectNames
+            this, R.layout.spinner_item,R.id.item_spiner, projectNames
         ) {
 
             override fun getDropDownView(
@@ -208,10 +206,10 @@ class CreateActivity : AppCompatActivity(), CreateView {
                     presenter.postIssues(project_id!!, title!!, description!!, severity_id!!, link!!, image!!, token!!)
 
                 }
-
-                setResult(1,intent)
                 Toast.makeText(this@CreateActivity, "Data Saved!", Toast.LENGTH_SHORT).show()
                 finish()
+                setResult(1,intent)
+
 
             }
         })
