@@ -243,7 +243,6 @@ class SubActivity : AppCompatActivity(), SubView {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
                     severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
 
-
                     submissionData?.let { adapter.setData(filterSeverity(it)) }
 
 //                    Toast.makeText(this@SubActivity, severityId.toString(), Toast.LENGTH_SHORT).show()
@@ -266,10 +265,7 @@ class SubActivity : AppCompatActivity(), SubView {
             builder.setTitle("Severity")
             builder.setSingleChoiceItems(sort, -1, null)
 
-            DialogInterface.OnClickListener { dialogInterface: DialogInterface, which ->
 
-                // mSelectedItems.[which]
-            }
             builder.setPositiveButton("OK") { dialog, id ->
 
                 Toast.makeText(this, "Its toast!", Toast.LENGTH_SHORT).show()
