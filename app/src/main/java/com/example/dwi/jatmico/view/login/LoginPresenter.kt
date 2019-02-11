@@ -1,8 +1,8 @@
-package com.example.dwi.jatmico.presenter
+package com.example.dwi.jatmico.view.login
 
 import com.example.dwi.jatmico.view.login.LoginView
 
-interface SigninPresenter {
+interface LoginPresenter {
     fun initView(view: LoginView)
     fun exchangeToken(accessToken: String?)
 }

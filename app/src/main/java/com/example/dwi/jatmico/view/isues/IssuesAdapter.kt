@@ -1,7 +1,5 @@
 package com.example.dwi.jatmico.view.isues
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +9,12 @@ import com.example.dwi.jatmico.data.models.Isues
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 
-class IsuesAdapter : RecyclerView.Adapter<IsuesAdapter.IsuesViewHolder>() {
+class IssuesAdapter : RecyclerView.Adapter<IssuesAdapter.IsuesViewHolder>() {
     private var isues: MutableList<Isues> = ArrayList()
     var listener: Listener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IsuesViewHolder {
-        val itemView = LayoutInflater.from(parent?.context).inflate(R.layout.item_isues, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_isues, parent, false)
         return IsuesViewHolder(itemView)
     }
 
@@ -31,8 +29,8 @@ class IsuesAdapter : RecyclerView.Adapter<IsuesAdapter.IsuesViewHolder>() {
         holder.itemView.severity.text = isues[position].severity.name
         holder.itemView.time.text = isues[position].updated_at
 
-        Picasso.with(holder.itemView?.getContext()).load(isues[position].user.image.url)
-            .into(holder.itemView?.profile_user)
+        Picasso.with(holder.itemView.getContext()).load(isues[position].user.image.url)
+            .into(holder.itemView.profile_user)
 
 //// ---Show detail isues--
 
@@ -64,18 +62,12 @@ class IsuesAdapter : RecyclerView.Adapter<IsuesAdapter.IsuesViewHolder>() {
         notifyItemRemoved(position)
     }
 
-    fun addItem(position: Int) {
-        isues.add(position)
+    fun addItem(position: Int, issue: Isues) {
+        isues.add(issue)
         notifyItemInserted(position)
     }
 
 }
-
-private fun <E> MutableList<E>.add(element: Int) {
-
-
-}
-
 
 
 

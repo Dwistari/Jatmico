@@ -18,17 +18,13 @@ import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severitys
-import com.example.dwi.jatmico.presenter.SubPresenter
-import com.example.dwi.jatmico.presenter.SubPresenterImp
-import com.example.dwi.jatmico.view.detail_isues.DetailActivity
+import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_submission.*
-import kotlinx.android.synthetic.main.spinner_item.*
+import kotlinx.android.synthetic.main.activity_my_submission.*
 import kotlin.collections.ArrayList
 
 
-class SubActivity : AppCompatActivity(), SubView {
+class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
     private var sortId: Int? = null
     private  var severityId: Int? = null
@@ -48,8 +44,8 @@ class SubActivity : AppCompatActivity(), SubView {
     }
 
     override fun showErrorAlert(it: Throwable) {
-        Log.e("SubActivity", it?.localizedMessage)
-        Toast.makeText(this@SubActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
+        Log.e("MySubmissionActivity", it?.localizedMessage)
+        Toast.makeText(this@MySubmissionActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
     override fun showData(submission: MutableList<Isues>) {
@@ -133,7 +129,7 @@ class SubActivity : AppCompatActivity(), SubView {
 
     private fun filterSubmission(submission: MutableList<Isues>): MutableList<Isues> {
         Log.d("filterSubmission", submission.size.toString())
-        var filteredSubmission: MutableList<Isues> = ArrayList()
+        val filteredSubmission: MutableList<Isues> = ArrayList()
         if (sortId != null) {
 
             submission.forEach {
@@ -157,7 +153,7 @@ class SubActivity : AppCompatActivity(), SubView {
         Log.d("filterSeverity", severity.toString())
 
         //NOT SHOW
-        var filterSeverity: MutableList<Isues> = ArrayList()
+        val filterSeverity: MutableList<Isues> = ArrayList()
         if (severityId != null) {
 
             severity.forEach {
@@ -180,8 +176,8 @@ class SubActivity : AppCompatActivity(), SubView {
         }
     }
 
-    private lateinit var adapter: SubAdapter
-    private lateinit var presenter: SubPresenter
+    private lateinit var adapter: MySubmissionAdapter
+    private lateinit var presenter: MySubmissionPresenter
 
     var access_token = ""
     private var position: Int? = null
@@ -192,7 +188,7 @@ class SubActivity : AppCompatActivity(), SubView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_submission)
+        setContentView(R.layout.activity_my_submission)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initPresenter()
@@ -226,7 +222,7 @@ class SubActivity : AppCompatActivity(), SubView {
 
         if (id == R.id.action_search) {
 
-            val intent = Intent(this@SubActivity, SearchActivity::class.java)
+            val intent = Intent(this@MySubmissionActivity, SearchActivity::class.java)
             intent.putExtra("sub_id", project_id)
             startActivity(intent)
             return true
@@ -245,7 +241,7 @@ class SubActivity : AppCompatActivity(), SubView {
 
                     submissionData?.let { adapter.setData(filterSeverity(it)) }
 
-//                    Toast.makeText(this@SubActivity, severityId.toString(), Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this@MySubmissionActivity, severityId.toString(), Toast.LENGTH_SHORT).show()
                 }
 
             })
@@ -289,11 +285,11 @@ class SubActivity : AppCompatActivity(), SubView {
 
     private fun initRecylerView() {
         card_recycler_view.layoutManager = LinearLayoutManager(this)
-        adapter = SubAdapter()
-        adapter.listener = object : SubAdapter.Listener {
+        adapter = MySubmissionAdapter()
+        adapter.listener = object : MySubmissionAdapter.Listener {
 
             override fun onClickItem(submission: Isues, position: Int) {
-                val intent = Intent(this@SubActivity, DetailActivity::class.java)
+                val intent = Intent(this@MySubmissionActivity, DetailIssueActivity::class.java)
                 intent.putExtra("issue_id", submission.id)
                 intent.putExtra("position", position)
                 startActivityForResult(intent, 1)
@@ -305,7 +301,7 @@ class SubActivity : AppCompatActivity(), SubView {
     }
 
     private fun initPresenter() {
-        presenter = SubPresenterImp()
+        presenter = MySubmissionPresenterImp()
         presenter.initView(this)
     }
 

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Search
-import com.example.dwi.jatmico.view.detail_isues.DetailActivity
+import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 
@@ -35,7 +35,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, DetailActivity::class.java)
+            val intent = Intent(holder.itemView.context, DetailIssueActivity::class.java)
             intent.putExtra("issue_id",search[position].id )
             holder.itemView.context.startActivity(intent)
         }

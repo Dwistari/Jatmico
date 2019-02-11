@@ -1,6 +1,6 @@
 package com.example.dwi.jatmico.data.interactors
 
-import com.example.dwi.jatmico.api.ApiServiceInterface
+import com.example.dwi.jatmico.data.api.ApiServiceInterface
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 

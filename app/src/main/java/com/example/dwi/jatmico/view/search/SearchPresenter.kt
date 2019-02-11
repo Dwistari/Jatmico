@@ -1,4 +1,4 @@
-package com.example.dwi.jatmico.presenter
+package com.example.dwi.jatmico.view.search
 
 import com.example.dwi.jatmico.view.search.SearchView
 

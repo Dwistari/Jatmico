@@ -1,8 +1,7 @@
 package com.example.dwi.jatmico.data.interactors
 
-import com.example.dwi.jatmico.api.ApiServiceInterface
+import com.example.dwi.jatmico.data.api.ApiServiceInterface
 import com.example.dwi.jatmico.data.models.MeResponse
-import com.example.dwi.jatmico.data.models.ProjectResponse
 import io.reactivex.Observable
 
 class MeInteractor {

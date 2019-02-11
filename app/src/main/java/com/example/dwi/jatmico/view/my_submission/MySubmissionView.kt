@@ -4,7 +4,7 @@ import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severitys
 
-interface SubView {
+interface MySubmissionView {
     fun showLoading()
     fun dismissLoading()
     fun showErrorAlert(it: Throwable)

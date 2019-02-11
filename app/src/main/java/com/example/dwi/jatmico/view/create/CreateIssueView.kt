@@ -3,7 +3,7 @@ package com.example.dwi.jatmico.view.create
 import com.example.dwi.jatmico.data.models.Project
 
 
-interface CreateView {
+interface CreateIssueView {
 
     fun showLoading()
     fun dismissLoading()

@@ -1,21 +1,18 @@
 package com.example.dwi.jatmico.view.login
 
-import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.example.dwi.jatmico.presenter.SigninPresenter
-import com.example.dwi.jatmico.presenter.SigninPresenterImp
 import com.example.dwi.jatmico.Constants
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Token
 import com.example.dwi.jatmico.view.home.HomeActivity
 import com.extrainteger.identitaslogin.SymbolicConfig
 import com.extrainteger.identitaslogin.SymbolicScope
-import kotlinx.android.synthetic.main.signin.*
+import kotlinx.android.synthetic.main.activity_login.*
 import com.extrainteger.identitaslogin.models.AuthToken
 import com.extrainteger.identitaslogin.Callback
 import com.extrainteger.identitaslogin.SymbolicException
@@ -23,6 +20,7 @@ import org.jetbrains.annotations.NotNull
 
 
 class LoginActivity : AppCompatActivity(), LoginView {
+    private var presenter: LoginPresenter? = null
 
     override fun dismissLoading() {
         loading.visibility = View.GONE
@@ -47,21 +45,21 @@ class LoginActivity : AppCompatActivity(), LoginView {
             sp.apply()
         }
         val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }
 
-    private var presenter: SigninPresenter? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.signin)
-        presenter = SigninPresenterImp()
+        setContentView(R.layout.activity_login)
+        presenter = LoginPresenterImp()
         presenter?.initView(this)
 
         val isLogin = getSharedPreferences("Jatmico", MODE_PRIVATE).getBoolean("login", false)
         if (isLogin) {
             val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         } else {
             val scopes: MutableList<String> = ArrayList() //you can leave it with empty data

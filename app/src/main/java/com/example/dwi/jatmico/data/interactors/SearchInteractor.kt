@@ -1,6 +1,6 @@
 package com.example.dwi.jatmico.data.interactors
 
-import com.example.dwi.jatmico.api.ApiServiceInterface
+import com.example.dwi.jatmico.data.api.ApiServiceInterface
 import com.example.dwi.jatmico.data.models.SearchResponse
 import io.reactivex.Observable
 

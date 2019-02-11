@@ -10,13 +10,16 @@ import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Me
 import com.example.dwi.jatmico.data.models.Project
-import com.example.dwi.jatmico.presenter.HomePresenter
-import com.example.dwi.jatmico.presenter.HomePresenterImp
-import com.example.dwi.jatmico.view.my_submission.SubActivity
+import com.example.dwi.jatmico.view.my_submission.MySubmissionActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity(), HomeView {
+
+    private lateinit var adapter: HomeAdapter
+    private lateinit var presenter: HomePresenter
+    private var page = 1
+    private var perPage = 10
 
     override fun dismissLoading() {
         loading.visibility = View.GONE
@@ -47,12 +50,6 @@ class HomeActivity : AppCompatActivity(), HomeView {
         loading.visibility = View.GONE
     }
 
-
-    private lateinit var adapter: HomeAdapter
-    private lateinit var presenter: HomePresenter
-    private var page = 1
-    private var perPage = 10
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -65,24 +62,25 @@ class HomeActivity : AppCompatActivity(), HomeView {
         }
 
         btn_sub.setOnClickListener { view ->
-            val intent = Intent(this@HomeActivity, SubActivity::class.java)
+            val intent = Intent(this@HomeActivity, MySubmissionActivity::class.java)
             startActivity(intent)
 
 
         }
 
     }
-        private fun initRecylerView() {
-            card_recycler_view.layoutManager = LinearLayoutManager(this)
-            adapter = HomeAdapter()
-            card_recycler_view.adapter = adapter
-        }
 
-        private fun initPresenter() {
-            presenter = HomePresenterImp()
-            presenter.initView(this)
-        }
+    private fun initRecylerView() {
+        card_recycler_view.layoutManager = LinearLayoutManager(this)
+        adapter = HomeAdapter()
+        card_recycler_view.adapter = adapter
     }
+
+    private fun initPresenter() {
+        presenter = HomePresenterImp()
+        presenter.initView(this)
+    }
+}
 
 
 

@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.detail_isues.DetailActivity" android:orientation="horizontal">
+        tools:context=".issueView.detail_isues.DetailActivity" android:orientation="horizontal">
 
 
     <android.support.v7.widget.Toolbar

@@ -4,18 +4,22 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Search
-import com.example.dwi.jatmico.presenter.SearchPresenter
-import com.example.dwi.jatmico.presenter.SearchPresenterImp
 import kotlinx.android.synthetic.main.activity_search.*
 import android.widget.SearchView.OnQueryTextListener
 
 class SearchActivity : AppCompatActivity() , SearchView {
+
+    private lateinit var adapter: SearchAdapter
+    private lateinit var presenter: SearchPresenter
+
+
+    private var project_id = 0
+    private var page = 1
+    private var per_page = 10
 
     override fun showLoading() {
         loading.visibility = View.VISIBLE
@@ -34,14 +38,6 @@ class SearchActivity : AppCompatActivity() , SearchView {
         Log.d("data_size", search.size.toString())
         adapter.setData(search)
     }
-
-    private lateinit var adapter: SearchAdapter
-    private lateinit var presenter: SearchPresenter
-
-
-    private var project_id = 0
-    private var page = 1
-    private var per_page = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

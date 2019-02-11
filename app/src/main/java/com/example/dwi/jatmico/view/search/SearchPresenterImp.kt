@@ -1,6 +1,5 @@
-package com.example.dwi.jatmico.presenter
+package com.example.dwi.jatmico.view.search
 
-import com.example.dwi.jatmico.view.search.SearchView
 import com.example.dwi.jatmico.data.interactors.SearchInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

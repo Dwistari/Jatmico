@@ -7,19 +7,18 @@ import android.view.ViewGroup
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
-import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.data.models.Severitys
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 
-class SubAdapter  : RecyclerView.Adapter<SubAdapter.SubViewHolder>() {
+class MySubmissionAdapter  : RecyclerView.Adapter<MySubmissionAdapter.SubViewHolder>() {
     private var submission: MutableList<Isues> = ArrayList()
     private var project: MutableList<Project> = ArrayList()
     private var severity: MutableList<Severitys> = ArrayList()
     var listener: Listener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubViewHolder {
-        val itemView = LayoutInflater.from(parent?.context).inflate(R.layout.item_isues, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_isues, parent, false)
         return SubViewHolder(itemView)
     }
     override fun getItemCount(): Int {
@@ -33,8 +32,8 @@ class SubAdapter  : RecyclerView.Adapter<SubAdapter.SubViewHolder>() {
         holder.itemView.severity.text = submission [position].severity.name
         holder.itemView.time.text = submission[position].updated_at
 
-        Picasso.with(holder.itemView?.getContext()).load(submission[position].user.image.url)
-            .into(holder.itemView?.profile_user)
+        Picasso.with(holder.itemView.getContext()).load(submission[position].user.image.url)
+            .into(holder.itemView.profile_user)
 
 // ---Show detail isues--
 

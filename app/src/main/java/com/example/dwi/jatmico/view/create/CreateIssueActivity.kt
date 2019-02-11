@@ -9,37 +9,58 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.dwi.jatmico.R
-import kotlinx.android.synthetic.main.activity_create.*
+import com.example.dwi.jatmico.data.models.Project
+import com.example.dwi.jatmico.view.home.HomeAdapter
+import kotlinx.android.synthetic.main.activity_create_issue.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.File
-import java.io.IOException
-import android.widget.ArrayAdapter
-import android.util.Log
-import com.example.dwi.jatmico.data.models.Project
-import com.example.dwi.jatmico.presenter.CreatePresenter
-import com.example.dwi.jatmico.presenter.CreatePresenterImp
-import com.example.dwi.jatmico.view.home.HomeAdapter
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
 
 
-class CreateActivity : AppCompatActivity(), CreateView {
+class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
     var projectNames: MutableList<String>? = null
+    private lateinit var adapter: HomeAdapter
+    private lateinit var issuePresenter: CreateIssuePresenter
+
+    var token: RequestBody? = null
+    var project_id: RequestBody? = null
+    var title: RequestBody? = null
+    var description: RequestBody? = null
+    var severity_id: RequestBody? = null
+    var link: RequestBody? = null
+    var image: MultipartBody.Part? = null
+
+    private val GALLERY = 1
+    private val CAMERA = 2
+    private var page = 1
+    private var perPage = 10
+
+    private var imageUriFromCamera: Uri? = null
+
+    private var permission = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
     override fun showLoading() {
         loading.visibility = View.GONE
     }
@@ -50,10 +71,9 @@ class CreateActivity : AppCompatActivity(), CreateView {
 
     override fun showErrorAlert(it: Throwable) {
 
-        Log.e("CreateActivity", it?.localizedMessage)
-        Toast.makeText(this@CreateActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
+        Log.e("CreateIssueActivity", it.localizedMessage)
+        Toast.makeText(this@CreateIssueActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
-
 
 
     //--SPINNER SHOW DATA
@@ -68,7 +88,7 @@ class CreateActivity : AppCompatActivity(), CreateView {
         }
         // Initializing an ArrayAdapter
         val spinnerArrayAdapter = object : ArrayAdapter<String>(
-            this, R.layout.spinner_item,R.id.item_spiner, projectNames
+            this, R.layout.spinner_item, R.id.item_spiner, projectNames
         ) {
 
             override fun getDropDownView(
@@ -128,36 +148,15 @@ class CreateActivity : AppCompatActivity(), CreateView {
         return cursor?.getString(column_index!!)!!
     }
 
-    private lateinit var adapter: HomeAdapter
-    private lateinit var presenter: CreatePresenter
-
-    var token: RequestBody? = null
-    var project_id: RequestBody? = null
-    var title: RequestBody? = null
-    var description: RequestBody? = null
-    var severity_id: RequestBody? = null
-    var link: RequestBody? = null
-    var image: MultipartBody.Part? = null
-
-    private val GALLERY = 1
-    private val CAMERA = 2
-    private var page = 1
-    private var perPage = 10
-
-    private var imageUriFromCamera: Uri? = null
-
-    private var permission = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create)
+        setContentView(R.layout.activity_create_issue)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initPresenter()
         initAdapter()
         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-            presenter.getProjects(page, perPage, sp.getString(getString(R.string.access_token), "")!!)
+            issuePresenter.getProjects(page, perPage, sp.getString(getString(R.string.access_token), "")!!)
 
         }
 
@@ -184,7 +183,7 @@ class CreateActivity : AppCompatActivity(), CreateView {
                     input_link.text.toString().equals("")
                 ) {
                     Toast.makeText(
-                        this@CreateActivity, "Lengkapi data terlebih dahulu",
+                        this@CreateIssueActivity, "Lengkapi data terlebih dahulu",
                         Toast.LENGTH_SHORT
                     ).show()
 
@@ -203,12 +202,20 @@ class CreateActivity : AppCompatActivity(), CreateView {
                     description = RequestBody.create(MediaType.parse("text/plain"), input_description.text.toString())
                     link = RequestBody.create(MediaType.parse("text/plain"), input_link.text.toString())
 
-                    presenter.postIssues(project_id!!, title!!, description!!, severity_id!!, link!!, image!!, token!!)
+                    issuePresenter.postIssues(
+                        project_id!!,
+                        title!!,
+                        description!!,
+                        severity_id!!,
+                        link!!,
+                        image!!,
+                        token!!
+                    )
 
                 }
-                Toast.makeText(this@CreateActivity, "Data Saved!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CreateIssueActivity, "Data Saved!", Toast.LENGTH_SHORT).show()
                 finish()
-                setResult(1,intent)
+                setResult(1)
 
 
             }
@@ -218,7 +225,7 @@ class CreateActivity : AppCompatActivity(), CreateView {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == GALLERY && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                  //ASK_PERMISSIONS_REQUEST_CODE
+            //ASK_PERMISSIONS_REQUEST_CODE
         }
 
         if (isHaveStorageAndCameraPermission()) {
@@ -295,7 +302,7 @@ class CreateActivity : AppCompatActivity(), CreateView {
 
                 } catch (e: IOException) {
                     e.printStackTrace()
-                    Toast.makeText(this@CreateActivity, "Failed!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateIssueActivity, "Failed!", Toast.LENGTH_SHORT).show()
                 }
 
             } else if (requestCode == CAMERA) {
@@ -354,7 +361,6 @@ class CreateActivity : AppCompatActivity(), CreateView {
     }
 
 
-
     //navigation back button
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
@@ -362,8 +368,8 @@ class CreateActivity : AppCompatActivity(), CreateView {
     }
 
     private fun initPresenter() {
-        presenter = CreatePresenterImp()
-        presenter.initView(this)
+        issuePresenter = CreateIssuePresenterImp()
+        issuePresenter.initView(this)
     }
 
     private fun initAdapter() {

@@ -1,9 +1,7 @@
-package com.example.dwi.jatmico.presenter
+package com.example.dwi.jatmico.view.my_submission
 
-import com.example.dwi.jatmico.view.my_submission.SubView
-
-interface SubPresenter {
-    fun initView(view: SubView)
+interface MySubmissionPresenter {
+    fun initView(view: MySubmissionView)
 //    fun getSub ( sortBy : String, sortSeverity :Int, page : Int,per_page : Int, token: String)
     fun getSub (  page : Int,per_page : Int, token: String)
     fun getProjects(page: Int, perPage: Int, token: String)

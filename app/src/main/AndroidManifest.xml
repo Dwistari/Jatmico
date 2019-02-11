@@ -26,15 +26,15 @@
         </activity>
         <activity android:name=".view.home.HomeActivity">
         </activity>
-        <activity android:name=".view.my_submission.SubActivity">
+        <activity android:name=".view.my_submission.MySubmissionActivity">
         </activity>
-        <activity android:name=".view.isues.IsuesActivity">
+        <activity android:name=".view.isues.IssuesActivity">
         </activity>
         <activity android:name=".view.search.SearchActivity">
         </activity>
-        <activity android:name=".view.detail_isues.DetailActivity">
+        <activity android:name=".view.detail_isues.DetailIssueActivity">
         </activity>
-        <activity android:name="com.example.dwi.jatmico.view.create.CreateActivity">
+        <activity android:name=".view.create.CreateIssueActivity">
         </activity>
     </application>
 

@@ -1,11 +1,10 @@
-package com.example.dwi.jatmico.presenter
+package com.example.dwi.jatmico.view.login
 
 import com.example.dwi.jatmico.data.interactors.SigninInteractor
-import com.example.dwi.jatmico.view.login.LoginView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class SigninPresenterImp : SigninPresenter {
+class LoginPresenterImp : LoginPresenter {
 
     override fun exchangeToken(accessToken: String?) {
         view?.showLoading()

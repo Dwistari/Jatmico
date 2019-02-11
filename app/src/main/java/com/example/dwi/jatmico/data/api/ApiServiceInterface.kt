@@ -1,4 +1,4 @@
-package com.example.dwi.jatmico.api
+package com.example.dwi.jatmico.data.api
 
 import com.example.dwi.jatmico.Constants
 import com.example.dwi.jatmico.data.models.*

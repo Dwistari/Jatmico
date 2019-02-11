@@ -1,30 +1,29 @@
 package com.example.dwi.jatmico.view.isues
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
-import com.example.dwi.jatmico.presenter.IsuesPresenter
-import com.example.dwi.jatmico.presenter.IsuesPresenterImp
-import kotlinx.android.synthetic.main.activity_isues.*
-import android.support.v7.widget.SearchView
+import kotlinx.android.synthetic.main.activity_issues.*
 import android.view.Menu
 import android.view.MenuItem
-import com.example.dwi.jatmico.view.create.CreateActivity
-import com.example.dwi.jatmico.view.detail_isues.DetailActivity
+import com.example.dwi.jatmico.view.create.CreateIssueActivity
+import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
 
 
-class IsuesActivity : AppCompatActivity(), IsuesView {
+class IssuesActivity : AppCompatActivity(), IssuesView {
+    private lateinit var adapter: IssuesAdapter
+    private lateinit var presenter: IssuesPresenter
+
+    private var project_id = 0
+    private var page = 1
+    private var per_page = 20
 
     override fun showLoading() {
         loading.visibility = View.VISIBLE
@@ -35,8 +34,8 @@ class IsuesActivity : AppCompatActivity(), IsuesView {
     }
 
     override fun showErrorAlert(it: Throwable) {
-        Log.e("IsuesActivity", it?.localizedMessage)
-        Toast.makeText(this@IsuesActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
+        Log.e("IssuesActivity", it.localizedMessage)
+        Toast.makeText(this@IssuesActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
     override fun showData(isues: MutableList<Isues>) {
@@ -44,18 +43,9 @@ class IsuesActivity : AppCompatActivity(), IsuesView {
         adapter.setData(isues)
     }
 
-    private lateinit var adapter: IsuesAdapter
-    private lateinit var presenter: IsuesPresenter
-
-    private var project_id = 0
-    private var page = 1
-    private var per_page = 20
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_isues)
+        setContentView(R.layout.activity_issues)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initPresenter()
@@ -71,7 +61,7 @@ class IsuesActivity : AppCompatActivity(), IsuesView {
         }
 
         fab.setOnClickListener { view ->
-            val intent = Intent(this@IsuesActivity, CreateActivity::class.java)
+            val intent = Intent(this@IssuesActivity, CreateIssueActivity::class.java)
             startActivityForResult(intent, 1)
 
         }
@@ -94,7 +84,7 @@ class IsuesActivity : AppCompatActivity(), IsuesView {
 
         if (id == R.id.action_search) {
 
-            val intent = Intent(this@IsuesActivity, SearchActivity::class.java)
+            val intent = Intent(this@IssuesActivity, SearchActivity::class.java)
             intent.putExtra("project_id", project_id)
             startActivity(intent)
             return true
@@ -115,11 +105,11 @@ class IsuesActivity : AppCompatActivity(), IsuesView {
 
     private fun initRecylerView() {
         card_recycler_view.layoutManager = LinearLayoutManager(this)
-        adapter = IsuesAdapter()
-        adapter.listener = object : IsuesAdapter.Listener {
+        adapter = IssuesAdapter()
+        adapter.listener = object : IssuesAdapter.Listener {
 
             override fun onClickItem(isues: Isues, position : Int) {
-                val intent = Intent(this@IsuesActivity, DetailActivity::class.java)
+                val intent = Intent(this@IssuesActivity, DetailIssueActivity::class.java)
                 intent.putExtra("issue_id", isues.id)
                 intent.putExtra("position", position)
                 startActivityForResult(intent, 2)
@@ -131,7 +121,7 @@ class IsuesActivity : AppCompatActivity(), IsuesView {
     }
 
     private fun initPresenter() {
-        presenter = IsuesPresenterImp()
+        presenter = IssuesPresenterImp()
         presenter.initView(this)
     }
 
@@ -147,9 +137,13 @@ class IsuesActivity : AppCompatActivity(), IsuesView {
 
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                    val position = data?.getIntExtra("position", 0)
-                    Log.d("position_received", position.toString())
-                    position?.let { adapter.addItem(it) }
+                    getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
+                        presenter.getIsues(
+                            project_id, page, per_page,
+                            sp.getString(getString(R.string.access_token), "")!!
+                        )
+
+                    }
                 }
             }
 
