@@ -21,21 +21,21 @@ import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
 import kotlinx.android.synthetic.main.activity_my_submission.*
+import java.util.*
+import java.util.Objects.compare
 import kotlin.collections.ArrayList
-
-
 
 
 class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
     private var sortId: Int? = null
-    private var sortBy: Int? = null
     private var severityId: Int? = null
     private var projectNames: MutableList<String>? = null
     private var severities: MutableList<Severity>? = ArrayList()
     private var severitiesNames: MutableList<String>? = ArrayList()
     private var submissionData: MutableList<Isues>? = null
-    private var sort = arrayOf("New", "OLD", "Most", "Less")
+    private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
+    private var sortAscending = true
 
 
     override fun showLoading() {
@@ -56,6 +56,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         submissionData = submission
         adapter.setData(filterSubmission(submission))
         adapter.setData(filterSeverity(submission))
+        adapter.setData(sortData(submission))
     }
 
     //show severities data
@@ -147,7 +148,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     private fun filterSeverity(severity: MutableList<Isues>): MutableList<Isues> {
         Log.d("filterSeverity", severity.toString())
 
-        //NOT SHOW
         val filterSeverity: MutableList<Isues> = ArrayList()
         if (severityId != null) {
 
@@ -155,7 +155,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                 Log.d("filter", "sev id: ${it.id}")
 
                 if (severityId == it.severity.id) {
-
 
                     filterSeverity.add(it)
 
@@ -170,6 +169,24 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
         }
     }
+
+    private fun sortData(severity: MutableList<Isues>): MutableList<Isues> {
+        val sortData: MutableList<Isues> = ArrayList()
+
+//        severity.sortByDescending()
+//        severity.forEach {
+//            it.id
+//            sortData.add(it)
+//        }
+//
+//        severity.sort()
+//        severity.forEach {
+//            it.id
+//            sortData.add(it)
+//        }
+        return sortData
+    }
+
 
     private lateinit var adapter: MySubmissionAdapter
     private lateinit var presenter: MySubmissionPresenter
@@ -247,33 +264,62 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         }
 
         if (id == R.id.sort_by) {
-//          val dialog: AlertDialog?
             val builder = AlertDialog.Builder(this)
-            builder.setItems(sort) { dialog : DialogInterface, position: Int  ->
-                     var  sortBy = sort.get(position)
+            builder.setItems(sort) { dialog: DialogInterface, position: Int ->
+                if (position == 0) {
+                    //ASC DATE
+                    var sortId = submissionData?.get(position)?.createdAt
 
-                if (position  == 0){
-                    Toast.makeText(this@MySubmissionActivity,"0", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MySubmissionActivity, "0", Toast.LENGTH_SHORT).show()
 
-                }else if (position ==1){
-                    Toast.makeText(this@MySubmissionActivity,"1", Toast.LENGTH_SHORT).show()
+                } else if (position == 1) {
+                    //DESC DATE
 
-                }else if(position == 2){
-                    Toast.makeText(this@MySubmissionActivity,"2", Toast.LENGTH_SHORT).show()
 
-                }else
-                     Toast.makeText(this@MySubmissionActivity, "3", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MySubmissionActivity, "1", Toast.LENGTH_SHORT).show()
+
+                } else if (position == 2) {
+                    //ASC Severity Id
+
+                    for (project in submissionData!!) {
+                        Log.d("unsorteddata", project.severity.id.toString())
+                    }
+                    Collections.sort(submissionData, object : Comparator<Isues> {
+                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                            return o1?.severity?.id!!.compareTo(o2?.severity!!.id)
+                        }
+
+                    })
+
+                    Log.d("sorteddata", submissionData.toString())
+
+                } else {
+                    //DESC Severity Id
+
+                    for (project in submissionData!!) {
+                        Log.d("unsorteddata", project.severity.id.toString())
+                    }
+                    Collections.sort(submissionData, object : Comparator<Isues> {
+                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                            return o2?.severity?.id!!.compareTo(o1?.severity!!.id)
+                        }
+
+                    })
+
+                    Log.d("sorteddata", submissionData.toString())
+
+
+                    submissionData?.let { adapter.setData(sortData(it)) }
+//                    Toast.makeText(this@MySubmissionActivity, "3", Toast.LENGTH_SHORT).show()
+                }
+
 
             }
-
-
             val dialog: AlertDialog? = builder.create()
             dialog?.show()
-
-
         }
-        return super.onOptionsItemSelected(item)
 
+        return super.onOptionsItemSelected(item)
     }
 
 
