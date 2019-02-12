@@ -24,9 +24,12 @@ import kotlinx.android.synthetic.main.activity_my_submission.*
 import kotlin.collections.ArrayList
 
 
+
+
 class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
     private var sortId: Int? = null
+    private var sortBy: Int? = null
     private var severityId: Int? = null
     private var projectNames: MutableList<String>? = null
     private var severities: MutableList<Severity>? = ArrayList()
@@ -192,7 +195,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
             access_token = sp.getString(getString(R.string.access_token), "")
 
         }
-//        presenter.getSub(sortBy,sortSeverity, page, per_page, access_token)
 
         presenter.getSub(page, per_page, access_token)
         presenter.getProjects(page, per_page, access_token)
@@ -247,10 +249,20 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         if (id == R.id.sort_by) {
 //          val dialog: AlertDialog?
             val builder = AlertDialog.Builder(this)
-            builder.setItems(sort) { dialog, position: Int  ->
+            builder.setItems(sort) { dialog : DialogInterface, position: Int  ->
+                     var  sortBy = sort.get(position)
 
+                if (position  == 0){
+                    Toast.makeText(this@MySubmissionActivity,"0", Toast.LENGTH_SHORT).show()
 
+                }else if (position ==1){
+                    Toast.makeText(this@MySubmissionActivity,"1", Toast.LENGTH_SHORT).show()
 
+                }else if(position == 2){
+                    Toast.makeText(this@MySubmissionActivity,"2", Toast.LENGTH_SHORT).show()
+
+                }else
+                     Toast.makeText(this@MySubmissionActivity, "3", Toast.LENGTH_SHORT).show()
 
             }
 
@@ -306,3 +318,4 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         }
     }
 }
+
