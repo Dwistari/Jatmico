@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.example.dwi.jatmico.Constants
+import com.example.dwi.jatmico.utils.Constants
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Token
 import com.example.dwi.jatmico.view.home.HomeActivity
