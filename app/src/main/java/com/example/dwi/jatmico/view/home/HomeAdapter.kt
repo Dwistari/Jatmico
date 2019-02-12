@@ -12,7 +12,7 @@ import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.view.isues.IssuesActivity
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_home.view.*
+import kotlinx.android.synthetic.main.item_project.view.*
 
 class HomeAdapter: RecyclerView.Adapter<HomeAdapter.ProjectViewHolder>() {
     private var projects: MutableList<Project> = ArrayList()
@@ -23,7 +23,7 @@ class HomeAdapter: RecyclerView.Adapter<HomeAdapter.ProjectViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_home, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false)
         return ProjectViewHolder(itemView)
     }
 

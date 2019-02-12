@@ -3,18 +3,18 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/item_view"
         android:background="@drawable/border"
-        android:weightSum="5"
         android:layout_below="@+id/atas"
         android:gravity="center"
-        android:layout_width="336dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
 
     <ImageView
             android:id="@+id/project_logo"
-            android:layout_marginLeft="20dp"
             android:src="@mipmap/ic_launcher"
             android:layout_gravity="center"
             android:layout_width="48dp"
@@ -24,10 +24,9 @@
 
     <RelativeLayout
             android:id="@+id/L2"
-            android:layout_weight="1"
             android:layout_marginLeft="20dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
         <TextView
@@ -47,13 +46,14 @@
                 android:layout_height="wrap_content"
                 android:text="Report"/>
 
-        <Button
+        <TextView
                 android:id="@+id/btn_QA"
                 android:layout_below="@id/report"
                 android:text="QA"
-                android:layout_width="32dp"
-                android:layout_height="16dp"
-                android:background="#f3f3f3"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#f3f3f3"
+                android:gravity="center"/>
 
 
         <ImageView
@@ -61,8 +61,7 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_arrow"
                 android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="80dp"/>
+                android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 
 </LinearLayout>

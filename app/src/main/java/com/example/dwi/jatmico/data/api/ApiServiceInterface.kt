@@ -1,6 +1,6 @@
 package com.example.dwi.jatmico.data.api
 
-import com.example.dwi.jatmico.Constants
+import com.example.dwi.jatmico.utils.Constants
 import com.example.dwi.jatmico.data.models.*
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import io.reactivex.Observable
