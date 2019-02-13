@@ -35,7 +35,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     private var severitiesNames: MutableList<String>? = ArrayList()
     private var submissionData: MutableList<Isues>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
-    private var sortAscending = true
 
 
     override fun showLoading() {
@@ -56,7 +55,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         submissionData = submission
         adapter.setData(filterSubmission(submission))
         adapter.setData(filterSeverity(submission))
-        adapter.setData(sortData(submission))
     }
 
     //show severities data
@@ -170,23 +168,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         }
     }
 
-    private fun sortData(severity: MutableList<Isues>): MutableList<Isues> {
-        val sortData: MutableList<Isues> = ArrayList()
-
-//        severity.sortByDescending()
-//        severity.forEach {
-//            it.id
-//            sortData.add(it)
-//        }
-//
-//        severity.sort()
-//        severity.forEach {
-//            it.id
-//            sortData.add(it)
-//        }
-        return sortData
-    }
-
 
     private lateinit var adapter: MySubmissionAdapter
     private lateinit var presenter: MySubmissionPresenter
@@ -267,16 +248,26 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
             val builder = AlertDialog.Builder(this)
             builder.setItems(sort) { dialog: DialogInterface, position: Int ->
                 if (position == 0) {
-                    //ASC DATE
-                    var sortId = submissionData?.get(position)?.createdAt
-
-                    Toast.makeText(this@MySubmissionActivity, "0", Toast.LENGTH_SHORT).show()
-
-                } else if (position == 1) {
                     //DESC DATE
 
+                    Collections.sort(submissionData, object : Comparator<Isues> {
+                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                            return o2?.createdAt?.compareTo(o1?.createdAt!!)!!
+                        }
 
-                    Toast.makeText(this@MySubmissionActivity, "1", Toast.LENGTH_SHORT).show()
+                    })
+                    submissionData?.let { adapter.setData(it) }
+
+                } else if (position == 1) {
+                    //ASC DATE
+
+                    Collections.sort(submissionData, object : Comparator<Isues> {
+                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                            return o1?.createdAt?.compareTo(o2?.createdAt!!)!!
+                        }
+
+                    })
+                    submissionData?.let { adapter.setData(it) }
 
                 } else if (position == 2) {
                     //ASC Severity Id
@@ -284,6 +275,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                     for (project in submissionData!!) {
                         Log.d("unsorteddata", project.severity.id.toString())
                     }
+
                     Collections.sort(submissionData, object : Comparator<Isues> {
                         override fun compare(o1: Isues?, o2: Isues?): Int {
                             return o1?.severity?.id!!.compareTo(o2?.severity!!.id)
@@ -292,6 +284,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                     })
 
                     Log.d("sorteddata", submissionData.toString())
+                    submissionData?.let { adapter.setData(it) }
 
                 } else {
                     //DESC Severity Id
@@ -308,9 +301,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
                     Log.d("sorteddata", submissionData.toString())
 
-
-                    submissionData?.let { adapter.setData(sortData(it)) }
-//                    Toast.makeText(this@MySubmissionActivity, "3", Toast.LENGTH_SHORT).show()
+                    submissionData?.let { adapter.setData(it) }
                 }
 
 
