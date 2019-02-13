@@ -58,6 +58,9 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
     //show severities data
     override fun showSeverity(severities: MutableList<Severity>) {
+
+        Log.d("SEVERITY DATA", severities.toString())
+
         this.severities?.addAll(severities)
         adapter.setSeverity(severities)
 
@@ -83,8 +86,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         }
 
 
-
-
         val spinnerArrayAdapter = ProjectListAdapter (this@MySubmissionActivity , projects)
         select_project.adapter = spinnerArrayAdapter
 
@@ -99,11 +100,8 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
                     if (Intent.ACTION_SEND != intent.action && intent.type == null) {
 
-//                        attachField(projects[position].id)
-//                        submissionData?.projects = projects.get(position)
-//
-////                sortId = projects.get(position).id
-////                submissionData?.let { adapter.setData(filterSubmission(it)) }
+                        sortId = projects.get(position).id
+                        submissionData?.let { adapter.setData(filterSubmission(it)) }
 
                         spinnerArrayAdapter.notifyDataSetChanged()
                     }

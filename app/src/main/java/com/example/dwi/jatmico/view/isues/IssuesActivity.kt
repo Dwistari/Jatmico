@@ -1,5 +1,7 @@
 package com.example.dwi.jatmico.view.isues
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -7,23 +9,33 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
 import kotlinx.android.synthetic.main.activity_issues.*
 import android.view.Menu
 import android.view.MenuItem
+import com.example.dwi.jatmico.R
+import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.view.create.CreateIssueActivity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
+import java.util.*
 
 
 class IssuesActivity : AppCompatActivity(), IssuesView {
     private lateinit var adapter: IssuesAdapter
     private lateinit var presenter: IssuesPresenter
 
+    var access_token = ""
     private var project_id = 0
     private var page = 1
     private var per_page = 20
+
+    private var severityId: Int? = null
+    private var severities: MutableList<Severity>? = ArrayList()
+    private var severitiesNames: MutableList<String>? = ArrayList()
+    private var issuesData: MutableList<Isues>? = null
+    private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
+
 
     override fun showLoading() {
         loading.visibility = View.VISIBLE
@@ -40,7 +52,45 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
     override fun showData(isues: MutableList<Isues>) {
         Log.d("data_size", isues.size.toString())
-        adapter.setData(isues)
+        issuesData = isues
+        adapter.setData(filterSeverity(isues))
+    }
+
+    //show severities data
+    override fun showSeverity(severities: MutableList<Severity>) {
+        this.severities?.addAll(severities)
+        adapter.setSeverity(severities)
+
+        severities.forEachIndexed { i, item ->
+            if (i < 3) {
+                severitiesNames?.add(item.name)
+            }
+        }
+
+    }
+    private fun filterSeverity(severity: MutableList<Isues>): MutableList<Isues> {
+        Log.d("filterSeverity", severity.toString())
+
+        val filterSeverity: MutableList<Isues> = ArrayList()
+        if (severityId != null) {
+
+            severity.forEach {
+                Log.d("filter", "sev id: ${it.id}")
+
+                if (severityId == it.severity.id) {
+
+                    filterSeverity.add(it)
+
+                    Log.d("tes Severity", filterSeverity.size.toString())
+
+                }
+
+            }
+            return filterSeverity
+        } else {
+            return severity
+
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,12 +103,11 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         project_id = intent.getIntExtra("project_id", project_id)
 
         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-            presenter.getIsues(
-                project_id, page, per_page,
-                sp.getString(getString(R.string.access_token), "")!!
-            )
+            access_token = sp.getString(getString(R.string.access_token), "")
 
         }
+        presenter.getIsues(project_id,page, per_page, access_token)
+        presenter.getSeverity(access_token)
 
         fab.setOnClickListener { view ->
             val intent = Intent(this@IssuesActivity, CreateIssueActivity::class.java)
@@ -90,17 +139,98 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
             return true
         }
         if (id == R.id.filter) {
-            Toast.makeText(this, "Item Two Clicked", Toast.LENGTH_LONG).show()
-            return true
+            Log.d("SEVERITY", severitiesNames.toString())
+            val dialog: AlertDialog?
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Severity")
+            builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1, null)
+
+
+            builder.setPositiveButton("OK") { dialog, which ->
+                severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
+
+                issuesData?.let { adapter.setData(filterSeverity(it)) }
+
+            }
+
+            builder.setNegativeButton("CANCEL") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            dialog = builder.create()
+            dialog?.show()
+
         }
+
         if (id == R.id.sort_by) {
-            Toast.makeText(this, "Item Three Clicked", Toast.LENGTH_LONG).show()
-            return true
+            val builder = AlertDialog.Builder(this)
+            builder.setItems(sort) { dialog: DialogInterface, position: Int ->
+                if (position == 0) {
+                    //DESC DATE
+
+                    Collections.sort(issuesData, object : Comparator<Isues> {
+                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                            return o2?.createdAt?.compareTo(o1?.createdAt!!)!!
+                        }
+
+                    })
+                    issuesData?.let { adapter.setData(it) }
+
+                } else if (position == 1) {
+                    //ASC DATE
+
+                    Collections.sort(issuesData, object : Comparator<Isues> {
+                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                            return o1?.createdAt?.compareTo(o2?.createdAt!!)!!
+                        }
+
+                    })
+                    issuesData?.let { adapter.setData(it) }
+
+                } else if (position == 2) {
+                    //ASC Severity Id
+
+                    for (project in issuesData!!) {
+                        Log.d("unsorteddata", project.severity.id.toString())
+                    }
+
+                    Collections.sort(issuesData, object : Comparator<Isues> {
+                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                            return o1?.severity?.id!!.compareTo(o2?.severity!!.id)
+                        }
+
+                    })
+
+                    Log.d("sorteddata", issuesData.toString())
+                    issuesData?.let { adapter.setData(it) }
+
+                } else {
+                    //DESC Severity Id
+
+                    for (project in issuesData!!) {
+                        Log.d("unsorteddata", project.severity.id.toString())
+                    }
+                    Collections.sort(issuesData, object : Comparator<Isues> {
+                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                            return o2?.severity?.id!!.compareTo(o1?.severity!!.id)
+                        }
+
+                    })
+
+                    Log.d("sorteddata", issuesData.toString())
+
+                    issuesData ?.let { adapter.setData(it) }
+                }
+
+
+            }
+            val dialog: AlertDialog? = builder.create()
+            dialog?.show()
         }
 
         return super.onOptionsItemSelected(item)
-
     }
+
 
 
     private fun initRecylerView() {
