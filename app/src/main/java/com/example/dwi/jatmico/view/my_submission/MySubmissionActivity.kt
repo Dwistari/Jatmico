@@ -2,15 +2,13 @@ package com.example.dwi.jatmico.view.my_submission
 
 import android.content.DialogInterface
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -20,9 +18,10 @@ import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_my_submission.*
+import kotlinx.android.synthetic.main.spinner_item.view.*
 import java.util.*
-import java.util.Objects.compare
 import kotlin.collections.ArrayList
 
 
@@ -80,46 +79,74 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         for (project in projects) {
             projectNames?.add(project.name)
 
-//         Picasso.with(projectNames?.).load(project.image).project.image.url)
-//            .into(R.layout.spinner_item,R.id.icon_project)
-//            Picasso.with(this).load(project.image?.url).into(icon_project)
+
         }
 
-        // Initializing an ArrayAdapter
-        val spinnerArrayAdapter = object : ArrayAdapter<String>(
-            this, R.layout.spinner_item, R.id.item_spiner, projectNames
-        ) {
 
-            override fun getDropDownView(
-                position: Int, convertView: View?,
-                parent: ViewGroup
-            ): View {
-                val view = super.getDropDownView(position, convertView, parent)
-                return view
-            }
-        }
 
-//--SPINNER--
+
+        val spinnerArrayAdapter = ProjectListAdapter (this@MySubmissionActivity , projects)
         select_project.adapter = spinnerArrayAdapter
 
-        select_project?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+        select_project?.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
 
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                }
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                    if (Intent.ACTION_SEND != intent.action && intent.type == null) {
+
+//                        attachField(projects[position].id)
+//                        submissionData?.projects = projects.get(position)
+//
+////                sortId = projects.get(position).id
+////                submissionData?.let { adapter.setData(filterSubmission(it)) }
+
+                        spinnerArrayAdapter.notifyDataSetChanged()
+                    }
+
+                }
+            }
+    }
+
+//--SPINNER--
+
+    class ProjectListAdapter(private val ctx: Context, val projects: MutableList<Project>?) :
+        ArrayAdapter<Project>(ctx, R.layout.spinner_item, R.id.item_spiner, projects) {
+
+        override fun getDropDownView(
+            position: Int, convertView: View?,
+            parent: ViewGroup
+        ): View {
+            return getCustomView(position, parent)
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            return getCustomView(position, parent)
+        }
+
+        fun getCustomView(position: Int, parent: ViewGroup): View {
+
+            val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val row = inflater.inflate(R.layout.spinner_item, parent, false)
+
+            row.item_spiner.text = projects?.get(position)?.name
+            if (projects?.get(position)?.image?.thumb?.url != null) {
+                Picasso
+                    .with(row.context)
+                    .load(projects?.get(position).image?.thumb?.url)
+//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(row.icon_project)
             }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
-                select_project.getItemAtPosition(position).toString()
-
-                sortId = projects.get(position).id
-                submissionData?.let { adapter.setData(filterSubmission(it)) }
-
-                spinnerArrayAdapter.notifyDataSetChanged()
-
-            }
-
+            return row
         }
     }
+
+
 
     private fun filterSubmission(submission: MutableList<Isues>): MutableList<Isues> {
         Log.d("filterSubmission", submission.size.toString())
@@ -167,7 +194,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
         }
     }
-
 
     private lateinit var adapter: MySubmissionAdapter
     private lateinit var presenter: MySubmissionPresenter
