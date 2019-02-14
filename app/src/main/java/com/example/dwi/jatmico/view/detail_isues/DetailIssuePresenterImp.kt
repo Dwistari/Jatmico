@@ -36,7 +36,7 @@ class DetailIssuePresenterImp : DetailIssuePresenter {
 
     override fun delIssues (token: String, issueId: String ) {
         view.showLoading()
-        interactors.delIssues (token, token )
+        interactors.delIssues (token, issueId )
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(

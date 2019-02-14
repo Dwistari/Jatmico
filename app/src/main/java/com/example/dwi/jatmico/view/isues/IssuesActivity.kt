@@ -271,6 +271,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
                         presenter.getIsues(
                             project_id, page, per_page,
                             sp.getString(getString(R.string.access_token), "")!!
+//                                    position?.let { adapter.addItem(it) }
                         )
 
                     }

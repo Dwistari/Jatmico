@@ -93,6 +93,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
             startActivity(intent)
             return true
         }
+
         if (id == R.id.menu_delete) {
             val builder = AlertDialog.Builder(this@DetailIssueActivity)
             builder.setMessage("Are you sure to delete this issue?")
@@ -101,7 +102,6 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
                 getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
                     issuePresenter.delIssues(isues_id.toString(),
                         sp.getString(getString(R.string.access_token), "")!!)
-
 
                 }
 

@@ -2,6 +2,7 @@ package com.example.dwi.jatmico.view.create
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -15,6 +16,7 @@ import android.provider.MediaStore
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
@@ -24,7 +26,9 @@ import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.view.home.HomeAdapter
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_create_issue.*
+import kotlinx.android.synthetic.main.spinner_item.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -85,34 +89,64 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         projectNames = ArrayList()
         for (project in projects) {
             projectNames?.add(project.name)
-        }
-        // Initializing an ArrayAdapter
-        val spinnerArrayAdapter = object : ArrayAdapter<String>(
-            this, R.layout.spinner_item, R.id.item_spiner, projectNames
-        ) {
 
-            override fun getDropDownView(
-                position: Int, convertView: View?,
-                parent: ViewGroup
-            ): View {
-                val view = super.getDropDownView(position, convertView, parent)
-                //           view.item_spiner = project.name
-                return view
-            }
+
         }
 
-//--SPINNER--
+
+        val spinnerArrayAdapter = ProjectListAdapter (this@CreateIssueActivity , projects)
         select_project.adapter = spinnerArrayAdapter
 
-        select_project?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+        select_project?.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
 
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                }
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                    if (Intent.ACTION_SEND != intent.action && intent.type == null) {
+                        project_id = RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
+
+                        spinnerArrayAdapter.notifyDataSetChanged()
+                    }
+
+                }
+            }
+    }
+
+//--SPINNER--
+
+    class ProjectListAdapter(private val ctx: Context, val projects: MutableList<Project>?) :
+        ArrayAdapter<Project>(ctx, R.layout.spinner_item, R.id.item_spiner, projects) {
+
+        override fun getDropDownView(
+            position: Int, convertView: View?,
+            parent: ViewGroup
+        ): View {
+            return getCustomView(position, parent)
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            return getCustomView(position, parent)
+        }
+
+        fun getCustomView(position: Int, parent: ViewGroup): View {
+
+            val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val row = inflater.inflate(R.layout.spinner_item, parent, false)
+
+            row.item_spiner.text = projects?.get(position)?.name
+            if (projects?.get(position)?.image?.thumb?.url != null) {
+                Picasso
+                    .with(row.context)
+                    .load(projects?.get(position).image?.thumb?.url)
+//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(row.icon_project)
             }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                project_id = RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
-            }
-
+            return row
         }
     }
 
