@@ -17,5 +17,17 @@ interface CreateIssuePresenter {
     )
 
     fun getProjects(page: Int, perPage: Int, token: String)
+    fun getIsues(project_id: Int, page : Int, per_page : Int, token: String)
+
+    fun updateIssues(
+        id : Int,
+        project_id: RequestBody,
+        title: RequestBody,
+        description: RequestBody,
+        severity_id: RequestBody,
+        link: RequestBody,
+        image: MultipartBody.Part,
+        token: RequestBody
+    )
 
 }

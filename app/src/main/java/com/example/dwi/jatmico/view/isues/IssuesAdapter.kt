@@ -1,5 +1,6 @@
 package com.example.dwi.jatmico.view.isues
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -31,10 +32,12 @@ class IssuesAdapter : RecyclerView.Adapter<IssuesAdapter.IsuesViewHolder>() {
         holder.itemView.severity.text = isues[position].severity.name
         holder.itemView.time.text = isues[position].updated_at
 
+        holder.itemView.severity.setBackgroundColor(Color.parseColor(isues[position].severity.color))
+
         Picasso.with(holder.itemView.getContext()).load(isues[position].user.image.url)
             .into(holder.itemView.profile_user)
 
-//// ---Show detail isues--
+// ---Show detail isues--
 
         holder.itemView.setOnClickListener {
             listener?.onClickItem(isues[position], position)
@@ -68,13 +71,11 @@ class IssuesAdapter : RecyclerView.Adapter<IssuesAdapter.IsuesViewHolder>() {
         isues.removeAt(position)
         notifyItemRemoved(position)
     }
-
-    fun addItem(position: Int, issue: Isues) {
-        isues.add(issue)
-        notifyItemInserted(position)
-    }
+//
+//    fun addItem(position: Int, issue: Isues) {
+//        isues.add(issue)
+//        notifyItemInserted(position)
+//    }
 
 }
-
-
 

@@ -24,10 +24,14 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.dwi.jatmico.R
+import com.example.dwi.jatmico.data.models.Detail
+import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.view.home.HomeAdapter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_create_issue.*
+import kotlinx.android.synthetic.main.activity_issues.*
+import kotlinx.android.synthetic.main.item_isues.*
 import kotlinx.android.synthetic.main.spinner_item.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -41,10 +45,13 @@ import java.util.*
 
 class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
+    private var issue: Detail? = null
     var projectNames: MutableList<String>? = null
     private lateinit var adapter: HomeAdapter
     private lateinit var issuePresenter: CreateIssuePresenter
+    private var issuesData: MutableList<Isues>? = null
 
+    var id: Int = 0
     var token: RequestBody? = null
     var project_id: RequestBody? = null
     var title: RequestBody? = null
@@ -53,6 +60,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     var link: RequestBody? = null
     var image: MultipartBody.Part? = null
 
+    private var isues_id = 0
     private val GALLERY = 1
     private val CAMERA = 2
     private var page = 1
@@ -66,17 +74,23 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     )
 
     override fun showLoading() {
-        loading.visibility = View.GONE
+        loadings.visibility = View.GONE
     }
 
     override fun dismissLoading() {
-        loading.visibility = View.GONE
+        loadings.visibility = View.GONE
     }
 
     override fun showErrorAlert(it: Throwable) {
 
         Log.e("CreateIssueActivity", it.localizedMessage)
         Toast.makeText(this@CreateIssueActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
+    }
+
+
+    override fun showDataIssue(isues: MutableList<Isues>) {
+        Log.d("data_size", isues.toString())
+        issuesData = isues
     }
 
 
@@ -90,11 +104,9 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         for (project in projects) {
             projectNames?.add(project.name)
 
-
         }
 
-
-        val spinnerArrayAdapter = ProjectListAdapter (this@CreateIssueActivity , projects)
+        val spinnerArrayAdapter = ProjectListAdapter(this@CreateIssueActivity, projects)
         select_project.adapter = spinnerArrayAdapter
 
         select_project?.onItemSelectedListener =
@@ -107,7 +119,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                     if (Intent.ACTION_SEND != intent.action && intent.type == null) {
-                        project_id = RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
+                        project_id =
+                            RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
 
                         spinnerArrayAdapter.notifyDataSetChanged()
                     }
@@ -185,22 +198,31 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_issue)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbarCreate)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        if (intent.getSerializableExtra("data") != null) {
+            issue = intent.getSerializableExtra("data") as Detail
+        }
+
         initPresenter()
         initAdapter()
-        getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-            issuePresenter.getProjects(page, perPage, sp.getString(getString(R.string.access_token), "")!!)
 
+        if (issue != null) {
+            bindData(issue!!)
+
+        } else {
+            getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
+                issuePresenter.getProjects(page, perPage, sp.getString(getString(R.string.access_token), "")!!)
+            }
         }
 
         radio_grup.check(R.id.radio_critical)
 
-
-//---Button Image--//
         upload_img!!.setOnClickListener {
             showPictureDialog()
         }
+
 
 //--SEND DATA--//
 
@@ -208,37 +230,10 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
             override fun onClick(v: View?) {
 
-                when (radio_grup.checkedRadioButtonId) {
-                    R.id.radio_critical -> severity_id = RequestBody.create(MediaType.parse("text/plain"),"1")
-                    R.id.radio_minor -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "2")
-                    else -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "3")
+                if (issue != null) {
 
-                }
-
-                if (input_title.text.toString().equals("") || input_description.text.toString().equals("") ||
-                    input_link.text.toString().equals("")
-                ) {
-                    Toast.makeText(
-                        this@CreateIssueActivity, "Lengkapi data terlebih dahulu",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                } else {
-
-                    getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-
-                        token = RequestBody.create(
-                            MediaType.parse("text/plain"),
-                            sp.getString(getString(R.string.access_token).toString(), "")!!
-                        )
-
-                    }
-
-                    title = RequestBody.create(MediaType.parse("text/plain"), input_title.text.toString())
-                    description = RequestBody.create(MediaType.parse("text/plain"), input_description.text.toString())
-                    link = RequestBody.create(MediaType.parse("text/plain"), input_link.text.toString())
-
-                    issuePresenter.postIssues(
+                    issuePresenter.updateIssues(
+                        id,
                         project_id!!,
                         title!!,
                         description!!,
@@ -248,7 +243,54 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                         token!!
                     )
 
+                } else {
+                    when (radio_grup.checkedRadioButtonId) {
+                        R.id.radio_critical -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "1")
+                        R.id.radio_minor -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "2")
+                        else -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "3")
+
+                    }
+
+                    if (input_title.text.toString().equals("") || input_description.text.toString().equals("") ||
+                        input_link.text.toString().equals("")
+                    ) {
+                        Toast.makeText(
+                            this@CreateIssueActivity, "Lengkapi data terlebih dahulu",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    } else {
+
+                        getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
+
+                            token = RequestBody.create(
+                                MediaType.parse("text/plain"),
+                                sp.getString(getString(R.string.access_token).toString(), "")!!
+                            )
+
+                        }
+
+                        title = RequestBody.create(MediaType.parse("text/plain"), input_title.text.toString())
+                        description =
+                            RequestBody.create(MediaType.parse("text/plain"), input_description.text.toString())
+                        link = RequestBody.create(MediaType.parse("text/plain"), input_link.text.toString())
+
+                        isues_id = intent.getIntExtra("issue_id", isues_id)
+
+
+                        issuePresenter.postIssues(
+                            project_id!!,
+                            title!!,
+                            description!!,
+                            severity_id!!,
+                            link!!,
+                            image!!,
+                            token!!
+                        )
+
+                    }
                 }
+
                 Toast.makeText(this@CreateIssueActivity, "Data Saved!", Toast.LENGTH_SHORT).show()
                 finish()
                 setResult(1)
@@ -256,6 +298,13 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
             }
         })
+    }
+
+    private fun bindData(issue: Detail) {
+        input_title.setText(issue.title)
+        input_description.setText(issue.description)
+//        select_project.set
+        input_link.setText(issue.link)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -413,4 +462,3 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     }
 
 }
-

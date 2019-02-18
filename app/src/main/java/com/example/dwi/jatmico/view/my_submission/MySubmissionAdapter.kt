@@ -1,5 +1,6 @@
 package com.example.dwi.jatmico.view.my_submission
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,8 @@ class MySubmissionAdapter  : RecyclerView.Adapter<MySubmissionAdapter.SubViewHol
         holder.itemView.name_user.text = submission [position].user.name
         holder.itemView.severity.text = submission [position].severity.name
         holder.itemView.time.text = submission[position].updated_at
+
+        holder.itemView.severity.setBackgroundColor(Color.parseColor(submission[position].severity.color))
 
         Picasso.with(holder.itemView.getContext()).load(submission[position].user.image.url)
             .into(holder.itemView.profile_user)

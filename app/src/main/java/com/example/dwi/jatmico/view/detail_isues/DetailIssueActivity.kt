@@ -21,6 +21,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
     private var isues_id = 0
     private var position: Int? = null
     private lateinit var issuePresenter: DetailIssuePresenter
+    private var issue: Detail? = null
 
     override fun dismissLoading() {
         loadings.visibility = View.GONE
@@ -38,7 +39,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
     }
 
     override fun showingData(detail: Detail?) {
-
+        issue = detail
         title_isues.text = detail?.title
         user.text = detail?.user?.name
         time.text = detail?.updated_at
@@ -90,6 +91,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
 
         if (id == R.id.menu_edit) {
             val intent = Intent(this@DetailIssueActivity, CreateIssueActivity::class.java)
+            intent.putExtra("data", isues_id)
             startActivity(intent)
             return true
         }
@@ -122,4 +124,5 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
         issuePresenter.initView(this)
     }
 }
+
 

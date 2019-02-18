@@ -7,7 +7,7 @@ interface DetailIssueView {
     fun showLoading()
     fun dismissLoading()
     fun showErrorAlert(e: Throwable)
-    fun showingData(detail: Detail?)
+    fun showingData(detail:Detail?)
     fun onSuccess()
 //    fun alert(message: String)
 

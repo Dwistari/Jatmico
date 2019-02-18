@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
     <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbarCreate"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/deep_rose"
@@ -122,7 +122,7 @@
             android:layout_marginStart="50dp"
             android:layout_below="@id/radio_grup"
             android:layout_width="305dp"
-            android:layout_height="40dp"/>
+            android:layout_height="40dp" android:layout_marginTop="0dp"/>
 
 
     <ImageView
@@ -169,7 +169,7 @@
 
 
     <LinearLayout
-            android:id="@+id/loading"
+            android:id="@+id/loadings"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white_three"

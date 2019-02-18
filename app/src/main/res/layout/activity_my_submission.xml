@@ -19,6 +19,7 @@
             android:id="@+id/select_project"
             android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
+            android:paddingLeft="20dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:entries="@array/select_project"/>
@@ -35,11 +36,17 @@
 
     </LinearLayout>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_below="@id/select_project"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
     <android.support.v7.widget.RecyclerView
             android:id="@+id/card_recycler_view"
-            android:layout_below="@id/select_project"
             android:padding="20dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

@@ -29,6 +29,8 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     private var project_id = 0
     private var page = 1
     private var per_page = 20
+    private var isDataEnd = false
+    private var isLoading = false
 
     private var severityId: Int? = null
     private var severities: MutableList<Severity>? = ArrayList()
@@ -46,6 +48,8 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     }
 
     override fun showErrorAlert(it: Throwable) {
+        isLoading = false
+        swipe_refresh?.isRefreshing = false
         Log.e("IssuesActivity", it.localizedMessage)
         Toast.makeText(this@IssuesActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
@@ -54,6 +58,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         Log.d("data_size", isues.size.toString())
         issuesData = isues
         adapter.setData(filterSeverity(isues))
+        swipe_refresh?.isRefreshing = false
     }
 
     //show severities data
@@ -93,9 +98,17 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private fun refreshItem() {
+        page = 1
+        isLoading = false
+        isDataEnd = false
+        presenter.getIsues(project_id,page, per_page, access_token)
+    }
+
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_issues)
+//        supportActionBar?.title = resources.getText(project_id)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initPresenter()
@@ -108,6 +121,11 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         }
         presenter.getIsues(project_id,page, per_page, access_token)
         presenter.getSeverity(access_token)
+        swipe_refresh?.setOnRefreshListener {
+                refreshItem()
+            }
+
+
 
         fab.setOnClickListener { view ->
             val intent = Intent(this@IssuesActivity, CreateIssueActivity::class.java)
@@ -281,5 +299,4 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         }
     }
 }
-
 

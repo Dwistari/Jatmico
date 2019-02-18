@@ -46,6 +46,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
     override fun showErrorAlert(it: Throwable) {
         Log.e("MySubmissionActivity", it?.localizedMessage)
+        swipe_refresh?.isRefreshing = false
         Toast.makeText(this@MySubmissionActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
@@ -54,6 +55,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         submissionData = submission
         adapter.setData(filterSubmission(submission))
         adapter.setData(filterSeverity(submission))
+        swipe_refresh?.isRefreshing = false
     }
 
     //show severities data
@@ -202,7 +204,15 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     private var sub_id = 0
     private var page = 1
     private var per_page = 20
+    private var isDataEnd = false
+    private var isLoading = false
 
+    private fun refreshItem() {
+        page = 1
+        isLoading = false
+        isDataEnd = false
+        presenter.getSub(page, per_page, access_token)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -221,6 +231,10 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         presenter.getSub(page, per_page, access_token)
         presenter.getProjects(page, per_page, access_token)
         presenter.getSeverity(access_token)
+        swipe_refresh?.setOnRefreshListener {
+            refreshItem()
+        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
