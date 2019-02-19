@@ -26,8 +26,9 @@ interface CreateIssuePresenter {
         description: RequestBody,
         severity_id: RequestBody,
         link: RequestBody,
-        image: MultipartBody.Part,
-        token: RequestBody
+        image: MultipartBody.Part?,
+        token: String
     )
+
 
 }

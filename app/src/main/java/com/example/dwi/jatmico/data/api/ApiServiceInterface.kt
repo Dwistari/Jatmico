@@ -90,14 +90,14 @@ interface ApiServiceInterface {
     @Multipart
     @PUT("api/v1/issues/{id}")
     fun updateIssues (
-        @Part("access_token") accessToken: RequestBody,
         @Path("id") issueId : Int,
         @Part("project_id") projectId: RequestBody?,
         @Part("title") title: RequestBody?,
         @Part("description") description: RequestBody?,
         @Part("severity_id") severity_id: RequestBody?,
         @Part("link") link: RequestBody?,
-        @Part image: MultipartBody.Part?
+        @Part image: MultipartBody.Part?,
+        @Query("access_token") accessToken: String?
 
     ): Observable<ResponseBody>
 

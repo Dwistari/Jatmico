@@ -8,10 +8,11 @@ import okhttp3.ResponseBody
 
 class UpdateInteractor {
 
-    fun updateIssues (token: RequestBody, id : Int, project_id: RequestBody, title: RequestBody, description: RequestBody,
-                    severity_id: RequestBody, link: RequestBody, image: MultipartBody.Part): Observable<ResponseBody> {
-        return api.updateIssues(token,id, project_id, title, description, severity_id, link, image)
+    fun updateIssues (token: String, id : Int, project_id: RequestBody, title: RequestBody, description: RequestBody,
+                    severity_id: RequestBody, link: RequestBody, image: MultipartBody.Part?): Observable<ResponseBody> {
+        return api.updateIssues(id, project_id, title, description, severity_id, link, image,token)
     }
+
 
     private var api: ApiServiceInterface = ApiServiceInterface.create()
 }

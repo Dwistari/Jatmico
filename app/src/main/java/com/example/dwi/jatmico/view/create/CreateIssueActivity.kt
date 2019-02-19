@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -28,10 +29,10 @@ import com.example.dwi.jatmico.data.models.Detail
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.view.home.HomeAdapter
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.activity_create_issue.*
-import kotlinx.android.synthetic.main.activity_issues.*
-import kotlinx.android.synthetic.main.item_isues.*
 import kotlinx.android.synthetic.main.spinner_item.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -52,7 +53,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     private var issuesData: MutableList<Isues>? = null
 
     var id: Int = 0
-    var token: RequestBody? = null
+    var token: String? = null
     var project_id: RequestBody? = null
     var title: RequestBody? = null
     var description: RequestBody? = null
@@ -74,11 +75,11 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     )
 
     override fun showLoading() {
-        loadings.visibility = View.GONE
+        loadingcreate.visibility = View.GONE
     }
 
     override fun dismissLoading() {
-        loadings.visibility = View.GONE
+        loadingcreate.visibility = View.GONE
     }
 
     override fun showErrorAlert(it: Throwable) {
@@ -97,7 +98,6 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     //--SPINNER SHOW DATA
     override fun showData(projects: MutableList<Project>) {
         Log.d("Show_Project", projects.size.toString())
-
         adapter.setData(projects)
 
         projectNames = ArrayList()
@@ -203,6 +203,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
         if (intent.getSerializableExtra("data") != null) {
             issue = intent.getSerializableExtra("data") as Detail
+            id = issue!!.id
         }
 
         initPresenter()
@@ -210,6 +211,9 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
         if (issue != null) {
             bindData(issue!!)
+            getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
+                issuePresenter.getProjects(page, perPage, sp.getString(getString(R.string.access_token), "")!!)
+            }
 
         } else {
             getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
@@ -232,6 +236,24 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
                 if (issue != null) {
 
+                    when (radio_grup.checkedRadioButtonId) {
+                        R.id.radio_critical -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "1")
+                        R.id.radio_minor -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "2")
+                        else -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "3")
+
+                    }
+
+                    title = RequestBody.create(MediaType.parse("text/plain"), input_title.text.toString())
+                    description =
+                        RequestBody.create(MediaType.parse("text/plain"), input_description.text.toString())
+                    link = RequestBody.create(MediaType.parse("text/plain"), input_link.text.toString())
+
+
+                    getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
+                        token = sp.getString(getString(R.string.access_token).toString(), "")
+                    }
+
+
                     issuePresenter.updateIssues(
                         id,
                         project_id!!,
@@ -239,7 +261,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                         description!!,
                         severity_id!!,
                         link!!,
-                        image!!,
+                        image,
                         token!!
                     )
 
@@ -260,10 +282,11 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                         ).show()
 
                     } else {
+                        var tokenAsRequestBody: RequestBody? = null
 
                         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
 
-                            token = RequestBody.create(
+                            tokenAsRequestBody = RequestBody.create(
                                 MediaType.parse("text/plain"),
                                 sp.getString(getString(R.string.access_token).toString(), "")!!
                             )
@@ -277,7 +300,6 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
                         isues_id = intent.getIntExtra("issue_id", isues_id)
 
-
                         issuePresenter.postIssues(
                             project_id!!,
                             title!!,
@@ -285,7 +307,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                             severity_id!!,
                             link!!,
                             image!!,
-                            token!!
+                            tokenAsRequestBody!!
                         )
 
                     }
@@ -303,8 +325,44 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     private fun bindData(issue: Detail) {
         input_title.setText(issue.title)
         input_description.setText(issue.description)
-//        select_project.set
         input_link.setText(issue.link)
+
+//        var target = object  : Target{
+//            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+////                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//            }
+//
+//            override fun onBitmapFailed(errorDrawable: Drawable?) {
+////                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//            }
+//
+//            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+//                display_img.setImageBitmap(bitmap)
+////                var file =  File(getCacheDir(), System.currentTimeMillis().toString()+ ".PNG")
+////                file.createNewFile()
+////
+////                var bos =  ByteArrayOutputStream();
+////                bitmap?.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+////                var bitmapdata = bos.toByteArray()
+////
+////                var fos =  FileOutputStream(file)
+////                fos.write(bitmapdata)
+////                fos.flush()
+////                fos.close()
+////
+////                val type: String?
+////                Log.d("AbsolutePath", file.absolutePath)
+////                val extension = MimeTypeMap.getFileExtensionFromUrl(file.absolutePath)
+////                type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+////
+////                val reqfile = RequestBody.create(MediaType.parse(type), file)
+////                image = MultipartBody.Part.createFormData("image", file.name, reqfile)
+
+//            }
+//
+//        }
+        Picasso.with(this).load(issue.image.url).into(display_img)
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -365,9 +423,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 val contentURI = data!!.data
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-                    //  val path = saveImage(bitmap)
                     display_img!!.setImageBitmap(bitmap)
-
 
                     val selectedImage = data.data
                     val projection = arrayOf(MediaStore.MediaColumns.DATA)
@@ -383,6 +439,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
                     val reqfile = RequestBody.create(MediaType.parse(type), file)
                     image = MultipartBody.Part.createFormData("image", file.name, reqfile)
+                    Log.d("IMAGEPATH", file.path)
 
 
                 } catch (e: IOException) {

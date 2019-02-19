@@ -91,7 +91,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
 
         if (id == R.id.menu_edit) {
             val intent = Intent(this@DetailIssueActivity, CreateIssueActivity::class.java)
-            intent.putExtra("data", isues_id)
+            intent.putExtra("data", issue)
             startActivity(intent)
             return true
         }
@@ -102,8 +102,10 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
             builder.setPositiveButton("YES") { dialog, which ->
 
                 getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-                    issuePresenter.delIssues(isues_id.toString(),
-                        sp.getString(getString(R.string.access_token), "")!!)
+                    issuePresenter.delIssues(
+                        isues_id.toString(),
+                        sp.getString(getString(R.string.access_token), "")!!
+                    )
 
                 }
 
@@ -124,5 +126,3 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
         issuePresenter.initView(this)
     }
 }
-
-

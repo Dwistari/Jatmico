@@ -2,6 +2,7 @@ package com.example.dwi.jatmico.data.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 class DetailResponse (
 
@@ -22,19 +23,20 @@ data class ImageDetail(
     @SerializedName("large")
     @Expose
     var large: LargeDetail ?
-)
+): Serializable
 
 data class LargeDetail(
     @SerializedName("url")
     @Expose
     var url: String?
-)
+): Serializable
+
 
 data class MediumDetail(
     @SerializedName("url")
     @Expose
     var url: String?
-)
+): Serializable
 
 data  class Detail(
     @SerializedName("id")
@@ -67,7 +69,8 @@ data  class Detail(
     @SerializedName ("updated_at")
     @Expose
     var updated_at : String
-)
+): Serializable
+
 data class SeverityDetail(
     @SerializedName("id")
     @Expose
@@ -81,13 +84,13 @@ data class SeverityDetail(
     @SerializedName("color")
     @Expose
     var color: String
-)
+): Serializable
 
 data class ThumbDetail(
     @SerializedName("url")
     @Expose
     var url: String
-)
+): Serializable
 
 data class UserDetail(
     @SerializedName("id")
@@ -99,4 +102,4 @@ data class UserDetail(
     @SerializedName("image")
     @Expose
     var image: Image
-)
+): Serializable

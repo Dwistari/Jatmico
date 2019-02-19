@@ -47,6 +47,7 @@ class CreateIssuePresenterImp : CreateIssuePresenter {
                 )
             }
     }
+
     override fun getIsues(project_id: Int, page: Int, per_page: Int, token: String) {
         issueView.showLoading()
         interactor.getIsues(project_id, page, per_page, token)
@@ -89,6 +90,7 @@ class CreateIssuePresenterImp : CreateIssuePresenter {
             }
     }
 
+
     override fun updateIssues(
         id: Int,
         project_id: RequestBody,
@@ -96,11 +98,11 @@ class CreateIssuePresenterImp : CreateIssuePresenter {
         description: RequestBody,
         severity_id: RequestBody,
         link: RequestBody,
-        image: MultipartBody.Part,
-        token: RequestBody
+        image: MultipartBody.Part?,
+        token: String
     ) {
         issueView.showLoading()
-        interactors.updateIssues(token, id,project_id, title, description, severity_id, link, image)
+        interactors.updateIssues(token, id, project_id, title, description, severity_id, link, image)
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
