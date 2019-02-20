@@ -21,6 +21,7 @@ class HomePresenterImp : HomePresenter {
                 {
                     view.dismissLoading()
                     view.showingData(it.me)
+                    view.saveId(it.me)
                 },
                 {
                     view.showErrorAlert(it)
@@ -53,7 +54,6 @@ class HomePresenterImp : HomePresenter {
                 )
             }
     }
-
     override fun initView(view: HomeView) {
         this.view = view
     }

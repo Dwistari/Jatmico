@@ -2,6 +2,7 @@ package com.example.dwi.jatmico.view.detail_isues
 
 import com.example.dwi.jatmico.data.interactors.DeleteInteractor
 import com.example.dwi.jatmico.data.interactors.DetailInteractor
+import com.example.dwi.jatmico.data.interactors.MeInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

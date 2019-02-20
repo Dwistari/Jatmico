@@ -95,7 +95,7 @@ data class ThumbDetail(
 data class UserDetail(
     @SerializedName("id")
     @Expose
-    var id: String,
+    var id: Int,
     @SerializedName("name")
     @Expose
     var name: String,

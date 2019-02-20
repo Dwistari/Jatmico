@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Detail
 import com.example.dwi.jatmico.view.create.CreateIssueActivity
+import com.example.dwi.jatmico.view.home.HomePresenter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail_issue.*
 
@@ -19,9 +20,13 @@ import kotlinx.android.synthetic.main.activity_detail_issue.*
 class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
 
     private var isues_id = 0
+    private var user_id = 0
     private var position: Int? = null
     private lateinit var issuePresenter: DetailIssuePresenter
     private var issue: Detail? = null
+    private var editMenu: MenuItem? = null
+    private var deleteMenu : MenuItem? = null
+
 
     override fun dismissLoading() {
         loadings.visibility = View.GONE
@@ -39,7 +44,10 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
     }
 
     override fun showingData(detail: Detail?) {
-        issue = detail
+        if (user_id != detail?.user?.id) {
+            editMenu?.isVisible = false
+            deleteMenu?.isVisible = false
+        }
         title_isues.text = detail?.title
         user.text = detail?.user?.name
         time.text = detail?.updated_at
@@ -69,7 +77,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
         position = intent.getIntExtra("position", 0)
         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
             issuePresenter.getDetail(isues_id, sp.getString(getString(R.string.access_token), "")!!)
-
+            user_id = sp.getInt("user_id",0)
         }
 
     }
@@ -81,13 +89,14 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_detail, menu)
+        editMenu = menu?.findItem(R.id.menu_edit)
+        deleteMenu = menu?.findItem(R.id.menu_delete)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
         val id = item?.getItemId()
-
 
         if (id == R.id.menu_edit) {
             val intent = Intent(this@DetailIssueActivity, CreateIssueActivity::class.java)

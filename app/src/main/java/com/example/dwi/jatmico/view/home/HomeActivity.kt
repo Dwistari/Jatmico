@@ -31,13 +31,19 @@ class HomeActivity : AppCompatActivity(), HomeView {
         Toast.makeText(this@HomeActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
+    override fun saveId(it: Me?) {
+        Log.d("user_id", it?.id.toString())
+        getSharedPreferences("Jatmico", MODE_PRIVATE).edit().let { sp ->
+            sp.putInt(getString(R.string.user_id), it?.id!!)
+            sp.apply()
+        }
+    }
+
     override fun showingData(me: Me?) {
 
         name.text = me?.name
         place.text = me?.location
-
         Picasso.with(this).load(me?.image?.url).into(profile)
-
     }
 
     override fun showData(projects: MutableList<Project>) {
@@ -64,7 +70,6 @@ class HomeActivity : AppCompatActivity(), HomeView {
         btn_sub.setOnClickListener { view ->
             val intent = Intent(this@HomeActivity, MySubmissionActivity::class.java)
             startActivity(intent)
-
 
         }
 
