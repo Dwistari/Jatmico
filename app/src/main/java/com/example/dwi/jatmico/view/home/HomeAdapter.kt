@@ -33,8 +33,11 @@ class HomeAdapter: RecyclerView.Adapter<HomeAdapter.ProjectViewHolder>() {
         holder.itemView.report.text = "${projects[position].total_issue} Report"
         holder.itemView.btn_QA.text = projects[position].tag_list.toString()
 
-        Picasso.with(holder.itemView.getContext()).load(projects[position].image.url)
-            .into(holder.itemView.project_logo)
+
+
+            Picasso.with(holder.itemView.getContext()).load(projects[position].image?.url)
+                .into(holder.itemView.project_logo)
+
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, IssuesActivity::class.java)

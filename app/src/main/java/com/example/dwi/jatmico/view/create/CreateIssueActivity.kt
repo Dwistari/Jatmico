@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Detail
+import com.example.dwi.jatmico.data.models.Image
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.view.home.HomeAdapter
@@ -33,6 +34,8 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.activity_create_issue.*
+import kotlinx.android.synthetic.main.item_project.view.*
+import kotlinx.android.synthetic.main.spinner_item.*
 import kotlinx.android.synthetic.main.spinner_item.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -47,7 +50,7 @@ import java.util.*
 class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
     private var issue: Detail? = null
-    var projectNames: MutableList<String>? = null
+    var projectNames: MutableList<Project>? = null
     private lateinit var adapter: HomeAdapter
     private lateinit var issuePresenter: CreateIssuePresenter
     private var issuesData: MutableList<Isues>? = null
@@ -100,11 +103,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         Log.d("Show_Project", projects.size.toString())
         adapter.setData(projects)
 
-        projectNames = ArrayList()
-        for (project in projects) {
-            projectNames?.add(project.name)
-
-        }
+        projects.add(0, Project(-1, "Select Project",null,null,null))
 
         val spinnerArrayAdapter = ProjectListAdapter(this@CreateIssueActivity, projects)
         select_project.adapter = spinnerArrayAdapter
@@ -119,8 +118,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                     if (Intent.ACTION_SEND != intent.action && intent.type == null) {
-                        project_id =
-                            RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
+                        project_id = RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
 
                         spinnerArrayAdapter.notifyDataSetChanged()
                     }
@@ -150,13 +148,16 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
             val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val row = inflater.inflate(R.layout.spinner_item, parent, false)
 
+
             row.item_spiner.text = projects?.get(position)?.name
             if (projects?.get(position)?.image?.thumb?.url != null) {
+                row.icon_project.visibility = View.VISIBLE
                 Picasso
                     .with(row.context)
                     .load(projects?.get(position).image?.thumb?.url)
-//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(row.icon_project)
+            }else{
+                row.icon_project.visibility = View.GONE
             }
 
             return row

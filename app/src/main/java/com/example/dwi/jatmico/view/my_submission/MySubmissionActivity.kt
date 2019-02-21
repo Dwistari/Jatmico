@@ -1,5 +1,6 @@
 package com.example.dwi.jatmico.view.my_submission
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.app.AlertDialog
 import android.content.Context
@@ -34,6 +35,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     private var severitiesNames: MutableList<String>? = ArrayList()
     private var submissionData: MutableList<Isues>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
+//    var myString = "Select Project"
 
 
     override fun showLoading() {
@@ -75,10 +77,11 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     }
 
     override fun showsProject(projects: MutableList<Project>) {
-        sortId = projects.get(0).id
-        submissionData?.let { adapter.setData(filterSubmission(it)) }
-
+//        sortId = projects.get(0).id
+//        submissionData?.let { adapter.setData(filterSubmission(it)) }
         adapter.setProject(projects)
+
+//        projects.add(0, Project(-1, "Select Project",null,null,null))
 
         projectNames = ArrayList()
         for (project in projects) {
@@ -125,22 +128,27 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+
             return getCustomView(position, parent)
         }
 
+        @SuppressLint("SetTextI18n")
         fun getCustomView(position: Int, parent: ViewGroup): View {
 
             val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val row = inflater.inflate(R.layout.spinner_item, parent, false)
 
             row.item_spiner.text = projects?.get(position)?.name
+
             if (projects?.get(position)?.image?.thumb?.url != null) {
+                row.icon_project.visibility = View.VISIBLE
                 Picasso
                     .with(row.context)
                     .load(projects?.get(position).image?.thumb?.url)
-//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(row.icon_project)
-            }
+            } else{
+            row.icon_project.visibility = View.GONE
+        }
 
             return row
         }
@@ -151,7 +159,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     private fun filterSubmission(submission: MutableList<Isues>): MutableList<Isues> {
         Log.d("filterSubmission", submission.size.toString())
         val filteredSubmission: MutableList<Isues> = ArrayList()
-        if (sortId != null) {
+        if (sortId != -1) {
 
             submission.forEach {
                 Log.d("filter", "sub id: ${it.id}")

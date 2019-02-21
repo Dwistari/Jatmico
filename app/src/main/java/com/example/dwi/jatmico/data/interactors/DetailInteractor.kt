@@ -10,9 +10,6 @@ class DetailInteractor {
     fun getDetail ( isues_id: Int, token: String ): Observable<DetailResponse> {
         return api.getDetail (isues_id ,token)
     }
-    fun getMe( token: String): Observable<MeResponse> {
-        return api.getMe(token)
-    }
 
     private var api: ApiServiceInterface = ApiServiceInterface.create()
 }

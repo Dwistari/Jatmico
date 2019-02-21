@@ -48,7 +48,6 @@ class HomeActivity : AppCompatActivity(), HomeView {
 
     override fun showData(projects: MutableList<Project>) {
         adapter.setData(projects)
-
     }
 
     override fun showLoading() {

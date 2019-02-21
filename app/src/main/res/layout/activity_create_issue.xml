@@ -57,6 +57,17 @@
             android:layout_below="@id/input_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+    <!--<TextView-->
+            <!--android:id="@+id/select"-->
+            <!--android:text="Select Project"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_below="@id/input_description"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="25dp"/>-->
+
     <Spinner
             android:id="@+id/select_project"
             android:layout_below="@id/input_description"
@@ -65,7 +76,7 @@
             android:layout_marginBottom="20dp"
             android:layout_marginTop="18dp"
             android:layout_alignParentEnd="true"
-            android:entries="@array/select_project"/>
+            android:prompt="@array/select_project"/>
     <TextView
             android:id="@+id/severity"
             android:text="Severity"
@@ -122,7 +133,8 @@
             android:layout_marginStart="50dp"
             android:layout_below="@id/radio_grup"
             android:layout_width="305dp"
-            android:layout_height="40dp" android:layout_marginTop="0dp"/>
+            android:layout_height="40dp"
+            android:layout_marginTop="0dp"/>
 
 
     <ImageView

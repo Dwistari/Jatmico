@@ -48,13 +48,13 @@ data class Project(
     var name: String,
     @SerializedName("image")
     @Expose
-    var image: Image,
+    var image: Image?,
     @SerializedName("total_issue")
     @Expose
-    var total_issue: Int,
+    var total_issue: Int?,
     @SerializedName("tag_list")
     @Expose
-    var tag_list: List<String>
+    var tag_list: List<String>?
 ): Serializable
 
 data class Thumb(

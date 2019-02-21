@@ -71,11 +71,7 @@ class IssuesAdapter : RecyclerView.Adapter<IssuesAdapter.IsuesViewHolder>() {
         isues.removeAt(position)
         notifyItemRemoved(position)
     }
-//
-//    fun addItem(position: Int, issue: Isues) {
-//        isues.add(issue)
-//        notifyItemInserted(position)
-//    }
+
 
 }
 
