@@ -1,14 +1,11 @@
 package com.example.dwi.jatmico.view.login
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import com.example.dwi.jatmico.utils.Constants
 import com.example.dwi.jatmico.R
-import com.example.dwi.jatmico.data.models.Token
+import com.example.dwi.jatmico.view.BaseActivity
 import com.example.dwi.jatmico.view.home.HomeActivity
 import com.extrainteger.identitaslogin.SymbolicConfig
 import com.extrainteger.identitaslogin.SymbolicScope
@@ -19,15 +16,15 @@ import com.extrainteger.identitaslogin.SymbolicException
 import org.jetbrains.annotations.NotNull
 
 
-class LoginActivity : AppCompatActivity(), LoginView {
+class LoginActivity : BaseActivity(), LoginView {
     private var presenter: LoginPresenter? = null
 
     override fun dismissLoading() {
-        loading.visibility = View.GONE
+        showProgressDialog()
     }
 
     override fun showLoading() {
-        loading.visibility = View.VISIBLE
+        hideProgressDialog()
     }
 
 
@@ -36,24 +33,19 @@ class LoginActivity : AppCompatActivity(), LoginView {
         Toast.makeText(this@LoginActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
-    override fun saveToken(it: Token) {
-        Log.d("accesstoken", it.access_token)
-        getSharedPreferences("Jatmico", MODE_PRIVATE).edit().let {sp ->
-            sp.putString(getString(R.string.access_token), it.access_token)
-            sp.putString(getString(R.string.refresh_token), it.refresh_token)
-            sp.putBoolean("login", true)
-            sp.apply()
-        }
+    override fun onSuccessLogin() {
         val intent = Intent(this@LoginActivity, HomeActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-        presenter = LoginPresenterImp()
+    override fun getLayout(): Int {
+        return R.layout.activity_login
+    }
+
+    override fun onViewReady() {
+        presenter = LoginPresenterImp(getSharedPreferences("Jatmico", MODE_PRIVATE))
         presenter?.initView(this)
 
         val isLogin = getSharedPreferences("Jatmico", MODE_PRIVATE).getBoolean("login", false)

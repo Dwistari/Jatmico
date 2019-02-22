@@ -102,7 +102,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         page = 1
         isLoading = false
         isDataEnd = false
-        presenter.getIsues(project_id,page, per_page, access_token)
+        presenter.getIsues(project_id,page, per_page)
     }
 
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,12 +114,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         initPresenter()
         initRecylerView()
         project_id = intent.getIntExtra("project_id", project_id)
-
-        getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-            access_token = sp.getString(getString(R.string.access_token), "")
-
-        }
-        presenter.getIsues(project_id,page, per_page, access_token)
+        presenter.getIsues(project_id,page, per_page)
         presenter.getSeverity(access_token)
         swipe_refresh?.setOnRefreshListener {
                 refreshItem()
@@ -269,7 +264,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     }
 
     private fun initPresenter() {
-        presenter = IssuesPresenterImp()
+        presenter = IssuesPresenterImp(getSharedPreferences("Jatmico", MODE_PRIVATE))
         presenter.initView(this)
     }
 
@@ -285,14 +280,10 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                    getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-                        presenter.getIsues(
-                            project_id, page, per_page,
-                            sp.getString(getString(R.string.access_token), "")!!
+                    presenter.getIsues(
+                        project_id, page, per_page
 //                                    position?.let { adapter.addItem(it) }
-                        )
-
-                    }
+                    )
                 }
             }
 

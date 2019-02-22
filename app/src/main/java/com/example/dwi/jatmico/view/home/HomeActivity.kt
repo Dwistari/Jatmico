@@ -27,16 +27,8 @@ class HomeActivity : AppCompatActivity(), HomeView {
 
     override fun showErrorAlert(it: Throwable) {
 
-        Log.e("HomeActivity", it?.localizedMessage)
+        Log.e("HomeActivity", it.localizedMessage)
         Toast.makeText(this@HomeActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun saveId(it: Me?) {
-        Log.d("user_id", it?.id.toString())
-        getSharedPreferences("Jatmico", MODE_PRIVATE).edit().let { sp ->
-            sp.putInt(getString(R.string.user_id), it?.id!!)
-            sp.apply()
-        }
     }
 
     override fun showingData(me: Me?) {
@@ -60,11 +52,8 @@ class HomeActivity : AppCompatActivity(), HomeView {
         setContentView(R.layout.activity_home)
         initPresenter()
         initRecylerView()
-        getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-            presenter.getProjects(page, perPage, sp.getString(getString(R.string.access_token), "")!!)
-            presenter.getMe(sp.getString(getString(R.string.access_token), "")!!)
-
-        }
+        presenter.getProjects(page, perPage)
+        presenter.getMe()
 
         btn_sub.setOnClickListener { view ->
             val intent = Intent(this@HomeActivity, MySubmissionActivity::class.java)
@@ -81,7 +70,7 @@ class HomeActivity : AppCompatActivity(), HomeView {
     }
 
     private fun initPresenter() {
-        presenter = HomePresenterImp()
+        presenter = HomePresenterImp(getSharedPreferences("Jatmico", MODE_PRIVATE))
         presenter.initView(this)
     }
 

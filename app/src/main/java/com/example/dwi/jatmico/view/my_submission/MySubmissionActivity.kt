@@ -219,7 +219,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         page = 1
         isLoading = false
         isDataEnd = false
-        presenter.getSub(page, per_page, access_token)
+        presenter.getSub(page, per_page)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -236,9 +236,9 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
         }
 
-        presenter.getSub(page, per_page, access_token)
-        presenter.getProjects(page, per_page, access_token)
-        presenter.getSeverity(access_token)
+        presenter.getSub(page, per_page)
+        presenter.getProjects(page, per_page)
+        presenter.getSeverity()
         swipe_refresh?.setOnRefreshListener {
             refreshItem()
         }
@@ -378,7 +378,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     }
 
     private fun initPresenter() {
-        presenter = MySubmissionPresenterImp()
+        presenter = MySubmissionPresenterImp(getSharedPreferences("Jatmico", MODE_PRIVATE))
         presenter.initView(this)
     }
 

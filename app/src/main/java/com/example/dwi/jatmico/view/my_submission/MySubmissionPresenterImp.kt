@@ -1,5 +1,6 @@
 package com.example.dwi.jatmico.view.my_submission
 
+import android.content.SharedPreferences
 import com.example.dwi.jatmico.data.interactors.IsuesInteractor
 import com.example.dwi.jatmico.data.interactors.ProjectInteractor
 import com.example.dwi.jatmico.data.interactors.SeverityInteractor
@@ -8,18 +9,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class MySubmissionPresenterImp : MySubmissionPresenter {
+class MySubmissionPresenterImp(private val sharedPreferences: SharedPreferences) : MySubmissionPresenter {
     private lateinit var view: MySubmissionView
-    private var interactor: SubInteractor = SubInteractor()
-    private var interactors: ProjectInteractor = ProjectInteractor()
-    private var interactorr: IsuesInteractor = IsuesInteractor()
-    private var interactorry: SeverityInteractor = SeverityInteractor()
+    private var interactor: SubInteractor = SubInteractor(sharedPreferences)
+    private var interactors: ProjectInteractor = ProjectInteractor(sharedPreferences)
+    private var interactorr: IsuesInteractor = IsuesInteractor(sharedPreferences)
+    private var interactorry: SeverityInteractor = SeverityInteractor(sharedPreferences)
     private var disposables = CompositeDisposable()
 
 
-    override fun getIsues(project_id: Int , page : Int, per_page : Int, token: String) {
+    override fun getIsues(project_id: Int , page : Int, per_page : Int) {
         view.showLoading()
-        interactorr.getIsues(project_id, page , per_page, token)
+        interactorr.getIsues(project_id, page , per_page)
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
@@ -37,9 +38,9 @@ class MySubmissionPresenterImp : MySubmissionPresenter {
             )
             }
     }
-    override fun getSub (  page : Int,per_page : Int, token: String) {
+    override fun getSub (  page : Int,per_page : Int) {
         view.showLoading()
-        interactor.getSub( page , per_page,token)
+        interactor.getSub( page , per_page)
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
@@ -58,9 +59,9 @@ class MySubmissionPresenterImp : MySubmissionPresenter {
             }
     }
 
-    override fun getProjects(page: Int, perPage: Int, token: String) {
+    override fun getProjects(page: Int, perPage: Int) {
         view.showLoading()
-        interactors.getHome(page, perPage, token)
+        interactors.getProjects(page, perPage)
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
@@ -82,9 +83,9 @@ class MySubmissionPresenterImp : MySubmissionPresenter {
             }
     }
 
-    override fun getSeverity(token: String) {
+    override fun getSeverity() {
         view.showLoading()
-        interactorry.getSeverity( token)
+        interactorry.getSeverity()
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
