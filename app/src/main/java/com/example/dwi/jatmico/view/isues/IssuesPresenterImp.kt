@@ -7,6 +7,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 class IssuesPresenterImp : IssuesPresenter {
+
     private lateinit var view: IssuesView
     private var interactor: IsuesInteractor = IsuesInteractor()
     private var interactorry: SeverityInteractor = SeverityInteractor()
@@ -53,6 +54,29 @@ class IssuesPresenterImp : IssuesPresenter {
                 )
             }
     }
+
+
+    override fun getProjects(page: Int, perPage: Int, token: String) {
+        view.showLoading()
+        interactor.getProject(page, perPage, token)
+            .subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(
+                {
+                    view.dismissLoading()
+                    view.showingProject(it.projects)
+                },
+                {
+                    view.showErrorAlert(it)
+                    view.dismissLoading()
+                }
+            )?.let {
+                disposables.add(
+                    it
+                )
+            }
+    }
+
 
 
     override fun initView(view: IssuesView) {

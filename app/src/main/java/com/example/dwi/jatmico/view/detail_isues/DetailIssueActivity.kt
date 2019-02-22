@@ -22,11 +22,10 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
     private var isues_id = 0
     private var user_id = 0
     private var position: Int? = null
-    private lateinit var issuePresenter: DetailIssuePresenter
     private var issue: Detail? = null
     private var editMenu: MenuItem? = null
     private var deleteMenu : MenuItem? = null
-
+    private lateinit var issuePresenter: DetailIssuePresenter
 
     override fun dismissLoading() {
         loadings.visibility = View.GONE
@@ -48,6 +47,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
             editMenu?.isVisible = false
             deleteMenu?.isVisible = false
         }
+
         title_isues.text = detail?.title
         user.text = detail?.user?.name
         time.text = detail?.updated_at
@@ -73,8 +73,8 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
         initPresenter()
 
         isues_id = intent.getIntExtra("issue_id", isues_id)
-
         position = intent.getIntExtra("position", 0)
+
         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
             issuePresenter.getDetail(isues_id, sp.getString(getString(R.string.access_token), "")!!)
             user_id = sp.getInt("user_id",0)

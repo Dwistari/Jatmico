@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_issues.*
 import android.view.Menu
 import android.view.MenuItem
 import com.example.dwi.jatmico.R
+import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.view.create.CreateIssueActivity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
@@ -22,11 +23,13 @@ import java.util.*
 
 
 class IssuesActivity : AppCompatActivity(), IssuesView {
+
     private lateinit var adapter: IssuesAdapter
     private lateinit var presenter: IssuesPresenter
 
     var access_token = ""
     private var project_id = 0
+    private var project_name =""
     private var page = 1
     private var per_page = 20
     private var isDataEnd = false
@@ -36,6 +39,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     private var severities: MutableList<Severity>? = ArrayList()
     private var severitiesNames: MutableList<String>? = ArrayList()
     private var issuesData: MutableList<Isues>? = null
+    private var project : MutableList<Project>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
 
 
@@ -61,6 +65,11 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         swipe_refresh?.isRefreshing = false
     }
 
+    override fun showingProject(projects: MutableList<Project>) {
+        adapter.setProject(projects)
+
+    }
+
     //show severities data
     override fun showSeverity(severities: MutableList<Severity>) {
         this.severities?.addAll(severities)
@@ -73,6 +82,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         }
 
     }
+
     private fun filterSeverity(severity: MutableList<Isues>): MutableList<Isues> {
         Log.d("filterSeverity", severity.toString())
 
@@ -102,30 +112,30 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         page = 1
         isLoading = false
         isDataEnd = false
-        presenter.getIsues(project_id,page, per_page, access_token)
+        presenter.getIsues(project_id, page, per_page, access_token)
     }
 
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_issues)
-//        supportActionBar?.title = resources.getText(project_id)
+//        supportActionBar?.title = project.name
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initPresenter()
         initRecylerView()
         project_id = intent.getIntExtra("project_id", project_id)
+        project_name = intent.getStringExtra("project_name")
 
         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
             access_token = sp.getString(getString(R.string.access_token), "")
 
         }
-        presenter.getIsues(project_id,page, per_page, access_token)
+        presenter.getIsues(project_id, page, per_page, access_token)
         presenter.getSeverity(access_token)
+        presenter.getProjects(page, per_page, access_token)
         swipe_refresh?.setOnRefreshListener {
-                refreshItem()
-            }
-
-
+            refreshItem()
+        }
 
         fab.setOnClickListener { view ->
             val intent = Intent(this@IssuesActivity, CreateIssueActivity::class.java)
@@ -237,7 +247,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
                     Log.d("sorteddata", issuesData.toString())
 
-                    issuesData ?.let { adapter.setData(it) }
+                    issuesData?.let { adapter.setData(it) }
                 }
 
 
@@ -250,13 +260,12 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     }
 
 
-
     private fun initRecylerView() {
         card_recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = IssuesAdapter()
         adapter.listener = object : IssuesAdapter.Listener {
 
-            override fun onClickItem(isues: Isues, position : Int) {
+            override fun onClickItem(isues: Isues, position: Int) {
                 val intent = Intent(this@IssuesActivity, DetailIssueActivity::class.java)
                 intent.putExtra("issue_id", isues.id)
                 intent.putExtra("position", position)

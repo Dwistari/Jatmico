@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Isues
+import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 
 class IssuesAdapter : RecyclerView.Adapter<IssuesAdapter.IsuesViewHolder>() {
     private var isues: MutableList<Isues> = ArrayList()
+    private var project: MutableList<Project> = ArrayList()
     private var severity: MutableList<Severity> = ArrayList()
     var listener: Listener? = null
 
@@ -59,6 +61,11 @@ class IssuesAdapter : RecyclerView.Adapter<IssuesAdapter.IsuesViewHolder>() {
 
     fun setData(isues: MutableList<Isues>) {
         this.isues = isues
+        notifyDataSetChanged()
+    }
+
+    fun setProject(project: MutableList<Project>) {
+        this.project = project
         notifyDataSetChanged()
     }
     //show severity

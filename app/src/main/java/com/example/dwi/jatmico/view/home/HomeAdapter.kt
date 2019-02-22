@@ -1,7 +1,6 @@
 package com.example.dwi.jatmico.view.home
 
 
-
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
@@ -14,7 +13,7 @@ import com.example.dwi.jatmico.view.isues.IssuesActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_project.view.*
 
-class HomeAdapter: RecyclerView.Adapter<HomeAdapter.ProjectViewHolder>() {
+class HomeAdapter : RecyclerView.Adapter<HomeAdapter.ProjectViewHolder>() {
     private var projects: MutableList<Project> = ArrayList()
 
     override fun getItemCount(): Int {
@@ -33,16 +32,14 @@ class HomeAdapter: RecyclerView.Adapter<HomeAdapter.ProjectViewHolder>() {
         holder.itemView.report.text = "${projects[position].total_issue} Report"
         holder.itemView.btn_QA.text = projects[position].tag_list.toString()
 
-
-
-            Picasso.with(holder.itemView.getContext()).load(projects[position].image?.url)
-                .into(holder.itemView.project_logo)
+        Picasso.with(holder.itemView.getContext()).load(projects[position].image?.url)
+            .into(holder.itemView.project_logo)
 
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, IssuesActivity::class.java)
-            intent.putExtra("project_id",projects[position].id )
-
+            intent.putExtra("project_id", projects[position].id)
+            intent.putExtra("project_name", projects[position].name)
             holder.itemView.context.startActivity(intent)
         }
     }
@@ -54,7 +51,7 @@ class HomeAdapter: RecyclerView.Adapter<HomeAdapter.ProjectViewHolder>() {
 
     fun setData(projects: MutableList<Project>) {
         this.projects = projects
-            notifyDataSetChanged()
-     }
+        notifyDataSetChanged()
     }
+}
 

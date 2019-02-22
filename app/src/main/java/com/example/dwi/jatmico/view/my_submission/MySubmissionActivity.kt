@@ -87,7 +87,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         for (project in projects) {
             projectNames?.add(project.name)
 
-
         }
 
 

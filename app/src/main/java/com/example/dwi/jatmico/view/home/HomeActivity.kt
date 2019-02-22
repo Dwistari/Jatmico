@@ -44,6 +44,14 @@ class HomeActivity : AppCompatActivity(), HomeView {
         name.text = me?.name
         place.text = me?.location
         Picasso.with(this).load(me?.image?.url).into(profile)
+
+        if (me?.image?.thumb?.url == null) {
+            profile.visibility = View.VISIBLE
+
+        }else{
+            profile.visibility = View.VISIBLE
+            Picasso.with(this).load(me?.image?.url).into(profile)
+        }
     }
 
     override fun showData(projects: MutableList<Project>) {

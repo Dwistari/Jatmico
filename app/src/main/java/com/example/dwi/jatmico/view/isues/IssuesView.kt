@@ -1,6 +1,7 @@
 package com.example.dwi.jatmico.view.isues
 
 import com.example.dwi.jatmico.data.models.Isues
+import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 
 interface IssuesView {
@@ -9,4 +10,5 @@ interface IssuesView {
     fun showErrorAlert(it: Throwable)
     fun showData(isues: MutableList<Isues>)
     fun showSeverity(severities: MutableList<Severity>)
+    fun showingProject(projects: MutableList<Project>)
 }

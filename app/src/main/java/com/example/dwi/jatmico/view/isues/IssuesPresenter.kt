@@ -4,4 +4,5 @@ interface IssuesPresenter {
         fun initView(view: IssuesView)
         fun getIsues(project_id: Int, page : Int, per_page : Int, token: String)
         fun getSeverity ( token: String)
+        fun getProjects(page: Int, per_page: Int, token: String)
 }
