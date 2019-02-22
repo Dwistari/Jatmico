@@ -6,6 +6,6 @@ interface LoginView {
     fun showLoading()
     fun dismissLoading()
     fun showErrorAlert(throwable: Throwable?)
-    fun saveToken(it: Token)
+    fun onSuccessLogin()
 
 }

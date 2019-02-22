@@ -9,5 +9,9 @@ class SearchInteractor {
         return api.getSearch (token , keyword ,project_id, page , per_page)
     }
 
+    fun getSearchSub ( keyword : String, page : Int, per_page : Int, token: String ): Observable<SearchResponse> {
+        return api.getSearchSub (token , keyword , page , per_page)
+    }
+
     private var api: ApiServiceInterface = ApiServiceInterface.create()
 }

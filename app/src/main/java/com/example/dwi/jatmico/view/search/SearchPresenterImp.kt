@@ -23,6 +23,23 @@ class SearchPresenterImp : SearchPresenter {
             )
     }
 
+    override fun getSearchSub (keyword: String, page: Int, per_page: Int, token: String) {
+        view?.showLoading()
+        interactor?.getSearchSub(keyword, page, per_page, token)
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(
+                {
+                    view?.dismissLoading()
+                    view?.showData(it.search)
+                },
+                {
+                    view?.showErrorAlert(it)
+                    view?.dismissLoading()
+                }
+            )
+    }
+
     private var view: SearchView? = null
     private var interactor: SearchInteractor? = SearchInteractor()
 

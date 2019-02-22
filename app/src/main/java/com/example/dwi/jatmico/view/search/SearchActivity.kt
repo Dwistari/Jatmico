@@ -16,7 +16,6 @@ class SearchActivity : AppCompatActivity() , SearchView {
     private lateinit var adapter: SearchAdapter
     private lateinit var presenter: SearchPresenter
 
-
     private var project_id = 0
     private var sub_id = 0
     private var page = 1
@@ -56,7 +55,10 @@ class SearchActivity : AppCompatActivity() , SearchView {
                     presenter.getSearch(
                         query!!, project_id, page, per_page,
                         sp.getString(getString(R.string.access_token), "")!!
-
+                    )
+                    presenter.getSearchSub(
+                        query!!, page, per_page,
+                        sp.getString(getString(R.string.access_token), "")!!
                     )
 
                 }

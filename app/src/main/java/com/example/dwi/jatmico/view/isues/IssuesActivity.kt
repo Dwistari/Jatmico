@@ -29,7 +29,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
     var access_token = ""
     private var project_id = 0
-    private var project_name =""
+    private var project_name = ""
     private var page = 1
     private var per_page = 20
     private var isDataEnd = false
@@ -39,7 +39,6 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     private var severities: MutableList<Severity>? = ArrayList()
     private var severitiesNames: MutableList<String>? = ArrayList()
     private var issuesData: MutableList<Isues>? = null
-    private var project : MutableList<Project>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
 
 
@@ -49,6 +48,11 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
     override fun dismissLoading() {
         loading.visibility = View.GONE
+    }
+
+    override fun showingProject(projects: MutableList<Project>) {
+        adapter.setProject(projects)
+
     }
 
     override fun showErrorAlert(it: Throwable) {
@@ -65,11 +69,6 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         swipe_refresh?.isRefreshing = false
     }
 
-    override fun showingProject(projects: MutableList<Project>) {
-        adapter.setProject(projects)
-
-    }
-
     //show severities data
     override fun showSeverity(severities: MutableList<Severity>) {
         this.severities?.addAll(severities)
@@ -82,6 +81,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         }
 
     }
+
 
     private fun filterSeverity(severity: MutableList<Isues>): MutableList<Isues> {
         Log.d("filterSeverity", severity.toString())
@@ -112,13 +112,12 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         page = 1
         isLoading = false
         isDataEnd = false
-        presenter.getIsues(project_id, page, per_page, access_token)
+        presenter.getIsues(project_id, page, per_page)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_issues)
-//        supportActionBar?.title = project.name
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initPresenter()
@@ -126,16 +125,17 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         project_id = intent.getIntExtra("project_id", project_id)
         project_name = intent.getStringExtra("project_name")
 
-        getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-            access_token = sp.getString(getString(R.string.access_token), "")
-
-        }
-        presenter.getIsues(project_id, page, per_page, access_token)
+        presenter.getIsues(project_id, page, per_page)
         presenter.getSeverity(access_token)
-        presenter.getProjects(page, per_page, access_token)
+        presenter.getProjects(page, per_page)
+
+
+        supportActionBar?.title = project_name
         swipe_refresh?.setOnRefreshListener {
             refreshItem()
         }
+
+
 
         fab.setOnClickListener { view ->
             val intent = Intent(this@IssuesActivity, CreateIssueActivity::class.java)
@@ -278,7 +278,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     }
 
     private fun initPresenter() {
-        presenter = IssuesPresenterImp()
+        presenter = IssuesPresenterImp(getSharedPreferences("Jatmico", MODE_PRIVATE))
         presenter.initView(this)
     }
 
@@ -294,14 +294,10 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                    getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-                        presenter.getIsues(
-                            project_id, page, per_page,
-                            sp.getString(getString(R.string.access_token), "")!!
+                    presenter.getIsues(
+                        project_id, page, per_page
 //                                    position?.let { adapter.addItem(it) }
-                        )
-
-                    }
+                    )
                 }
             }
 

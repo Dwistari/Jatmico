@@ -47,6 +47,15 @@ interface ApiServiceInterface {
 
     ): Observable<SearchResponse>
 
+    @GET("api/v1/me/search ")
+    fun getSearchSub(
+        @Query("access_token") accessToken: String?,
+        @Query("keyword") keyword: String,
+        @Query("page") page: Int?,
+        @Query("per_page") per_page: Int
+
+    ): Observable<SearchResponse>
+
     @GET("api/v1/issues/{id} ")
     fun getDetail(
         @Path("id") isues_id: Int?,
