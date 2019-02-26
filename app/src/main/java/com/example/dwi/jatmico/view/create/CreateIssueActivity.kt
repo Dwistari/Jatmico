@@ -246,7 +246,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
             override fun onClick(v: View?) {
 
-                     //Edit issue
+                //Edit issue
                 if (issue != null) {
 
                     when (radio_grup.checkedRadioButtonId) {
@@ -280,15 +280,9 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 } else {
 
 //  Create Issue
-                    when (radio_grup.checkedRadioButtonId) {
-                        R.id.radio_critical -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "1")
-                        R.id.radio_minor -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "2")
-                        else -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "3")
 
-                    }
-
-                    if (input_title.text.toString().equals("") || input_description.text.toString().equals("") ||
-                        input_link.text.toString().equals("")
+                    if (input_title.text.toString() == "" || input_description.text.toString() == "" ||
+                        input_link.text.toString() == ""
                     ) {
                         Toast.makeText(
                             this@CreateIssueActivity, "Lengkapi data terlebih dahulu",
@@ -296,6 +290,14 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                         ).show()
 
                     } else {
+
+                        when (radio_grup.checkedRadioButtonId) {
+                            R.id.radio_critical -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "1")
+                            R.id.radio_minor -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "2")
+                            else -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "3")
+
+                        }
+
                         var tokenAsRequestBody: RequestBody? = null
 
                         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
@@ -304,8 +306,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                                 MediaType.parse("text/plain"),
                                 sp.getString(getString(R.string.access_token).toString(), "")!!
                             )
-
                         }
+
 
                         title = RequestBody.create(MediaType.parse("text/plain"), input_title.text.toString())
                         description =
@@ -324,12 +326,13 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                             tokenAsRequestBody!!
                         )
 
-                    }
-                }
+                        Toast.makeText(this@CreateIssueActivity, "Data Saved!", Toast.LENGTH_SHORT).show()
+                        finish()
+                        setResult(1)
 
-                Toast.makeText(this@CreateIssueActivity, "Data Saved!", Toast.LENGTH_SHORT).show()
-                finish()
-                setResult(1)
+                    }
+
+                }
 
 
             }
@@ -378,7 +381,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     private fun takePhotoFromCamera() {
         val values = ContentValues()
         imageUriFromCamera = contentResolver?.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
+        )
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUriFromCamera)
         startActivityForResult(intent, CAMERA)
@@ -392,7 +396,6 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                     val contentURI = data.data
                     try {
                         val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-                        Log.d("IMAGEGALERY", bitmap.toString())
                         display_img!!.setImageBitmap(bitmap)
 
                         val selectedImage = data.data
@@ -419,13 +422,14 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
                 }
 
-            }
-            else if (requestCode == CAMERA) {
+            } else if (requestCode == CAMERA) {
                 val thumbnail = MediaStore.Images.Media.getBitmap(contentResolver, imageUriFromCamera)
 
                 val ei = ExifInterface(getRealPathFromURI(imageUriFromCamera))
-                val orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED)
+                val orientation = ei.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED
+                )
                 val rotatedBitmap: Bitmap?
                 when (orientation) {
                     ExifInterface.ORIENTATION_ROTATE_90 -> {
@@ -441,11 +445,18 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 }
 
                 val bytes = ByteArrayOutputStream()
-                val compressedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, rotatedBitmap?.width!! / 4, rotatedBitmap.height / 4, false)
+                val compressedBitmap = Bitmap.createScaledBitmap(
+                    rotatedBitmap,
+                    rotatedBitmap?.width!! / 4,
+                    rotatedBitmap.height / 4,
+                    false
+                )
                 compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes)
                 display_img.setImageBitmap(compressedBitmap)
-                val destination = File(Environment.getExternalStorageDirectory(),
-                    System.currentTimeMillis().toString() + ".jpg")
+                val destination = File(
+                    Environment.getExternalStorageDirectory(),
+                    System.currentTimeMillis().toString() + ".jpg"
+                )
                 val fo: FileOutputStream
                 try {
                     destination.createNewFile()
