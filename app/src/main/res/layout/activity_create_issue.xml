@@ -23,10 +23,10 @@
 
     <TextView
             android:id="@+id/tv_title"
+            android:layout_below="@id/toolbarCreate"
             android:text="Title"
             android:textSize="24sp"
             android:background="#f3f3f3"
-            android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     <EditText
@@ -176,8 +176,7 @@
             android:src="@drawable/ic_send"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="45dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="30dp"/>
+            android:layout_alignParentBottom="true"/>
 
 
     <LinearLayout

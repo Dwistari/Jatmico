@@ -1,6 +1,7 @@
 package com.example.dwi.jatmico.view.create
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -229,7 +230,13 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         radio_grup.check(R.id.radio_critical)
 
         upload_img!!.setOnClickListener {
-            showPictureDialog()
+            if (isHaveStorageAndCameraPermission()) {
+                showPictureDialog()
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(permission, 11)//ASK_PERMISSIONS_REQUEST_CODE
+                }
+            }
         }
 
 
@@ -342,16 +349,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == GALLERY && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            //ASK_PERMISSIONS_REQUEST_CODE
-        }
-
-        if (isHaveStorageAndCameraPermission()) {
+        if (requestCode == 11 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             showPictureDialog()
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(permission, GALLERY)//ASK_PERMISSIONS_REQUEST_CODE
-            }
         }
     }
 
@@ -379,8 +378,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     private fun takePhotoFromCamera() {
         val values = ContentValues()
         imageUriFromCamera = contentResolver?.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
-        )
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUriFromCamera)
         startActivityForResult(intent, CAMERA)
@@ -388,48 +386,46 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        super.onActivityResult(requestCode, resultCode, data)
-        /* if (resultCode == this.RESULT_CANCELED)
-         {
-         return
-         }*/
-        if (requestCode == GALLERY) {
-            if (data != null) {
-                val contentURI = data.data
-                try {
-                    val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-                    display_img!!.setImageBitmap(bitmap)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == GALLERY) {
+                if (data != null) {
+                    val contentURI = data.data
+                    try {
+                        val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
+                        Log.d("IMAGEGALERY", bitmap.toString())
+                        display_img!!.setImageBitmap(bitmap)
 
-                    val selectedImage = data.data
-                    val projection = arrayOf(MediaStore.MediaColumns.DATA)
-                    val cursor = managedQuery(selectedImage, projection, null, null, null)
-                    val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
-                    cursor.moveToFirst()
-                    val path = cursor.getString(columnIndex)
-                    val file = File(path)
+                        val selectedImage = data.data
+                        val projection = arrayOf(MediaStore.MediaColumns.DATA)
+                        val cursor = managedQuery(selectedImage, projection, null, null, null)
+                        val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
+                        cursor.moveToFirst()
+                        val path = cursor.getString(columnIndex)
+                        val file = File(path)
 
-                    val type: String?
-                    val extension = MimeTypeMap.getFileExtensionFromUrl(file.absolutePath)
-                    type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                        val type: String?
+                        val extension = MimeTypeMap.getFileExtensionFromUrl(file.absolutePath)
+                        type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
 
-                    val reqfile = RequestBody.create(MediaType.parse(type), file)
-                    image = MultipartBody.Part.createFormData("image", file.name, reqfile)
-                    Log.d("IMAGEPATH", file.path)
+                        val reqfile = RequestBody.create(MediaType.parse(type), file)
+                        image = MultipartBody.Part.createFormData("image", file.name, reqfile)
+                        Log.d("IMAGEPATH", file.path)
 
 
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                    Toast.makeText(this@CreateIssueActivity, "Failed!", Toast.LENGTH_SHORT).show()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        Toast.makeText(this@CreateIssueActivity, "Failed!", Toast.LENGTH_SHORT).show()
+                    }
+
                 }
 
-            } else if (requestCode == CAMERA) {
-
+            }
+            else if (requestCode == CAMERA) {
                 val thumbnail = MediaStore.Images.Media.getBitmap(contentResolver, imageUriFromCamera)
+
                 val ei = ExifInterface(getRealPathFromURI(imageUriFromCamera))
-                val orientation = ei.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED
-                )
+                val orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED)
                 val rotatedBitmap: Bitmap?
                 when (orientation) {
                     ExifInterface.ORIENTATION_ROTATE_90 -> {
@@ -445,18 +441,11 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 }
 
                 val bytes = ByteArrayOutputStream()
-                val compressedBitmap = Bitmap.createScaledBitmap(
-                    rotatedBitmap,
-                    rotatedBitmap?.width!! / 4,
-                    rotatedBitmap.height / 4,
-                    false
-                )
+                val compressedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, rotatedBitmap?.width!! / 4, rotatedBitmap.height / 4, false)
                 compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes)
                 display_img.setImageBitmap(compressedBitmap)
-                val destination = File(
-                    Environment.getExternalStorageDirectory(),
-                    System.currentTimeMillis().toString() + ".jpg"
-                )
+                val destination = File(Environment.getExternalStorageDirectory(),
+                    System.currentTimeMillis().toString() + ".jpg")
                 val fo: FileOutputStream
                 try {
                     destination.createNewFile()
@@ -472,7 +461,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
 
                 val reqFile = RequestBody.create(MediaType.parse(type), destination)
-                image = MultipartBody.Part.createFormData("image", destination.getName(), reqFile)
+                image = MultipartBody.Part.createFormData("avatar", destination.getName(), reqFile)
+                Log.d("imagefromcamera", image.toString())
             }
         }
     }
