@@ -270,7 +270,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
                 intent.putExtra("issue_id", isues.id)
                 intent.putExtra("position", position)
                 startActivityForResult(intent, 2)
-//                startActivity(intent)
+
 
             }
         }

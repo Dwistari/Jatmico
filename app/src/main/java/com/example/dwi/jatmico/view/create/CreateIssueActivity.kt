@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -50,7 +49,6 @@ import java.util.*
 class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
     private var issue: Detail? = null
-    var projectNames: MutableList<Project>? = null
     private lateinit var adapter: HomeAdapter
     private lateinit var issuePresenter: CreateIssuePresenter
     private var issuesData: MutableList<Isues>? = null
@@ -103,7 +101,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         Log.d("Show_Project", projects.size.toString())
         adapter.setData(projects)
 
-        projects.add(0, Project(-1, "Select Project",null,null,null))
+        projects.add(0, Project(-1, "Select Project", null, null, null))
 
         val spinnerArrayAdapter = ProjectListAdapter(this@CreateIssueActivity, projects)
         select_project.adapter = spinnerArrayAdapter
@@ -118,7 +116,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                     if (Intent.ACTION_SEND != intent.action && intent.type == null) {
-                        project_id = RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
+                        project_id =
+                            RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
 
                         spinnerArrayAdapter.notifyDataSetChanged()
                     }
@@ -135,6 +134,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         override fun getDropDownView(
             position: Int, convertView: View?,
             parent: ViewGroup
+
         ): View {
             return getCustomView(position, parent)
         }
@@ -156,7 +156,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                     .with(row.context)
                     .load(projects?.get(position).image?.thumb?.url)
                     .into(row.icon_project)
-            }else{
+            } else {
                 row.icon_project.visibility = View.GONE
             }
 
@@ -190,10 +190,10 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     private fun getRealPathFromURI(contentUri: Uri?): String {
         val proj = arrayOf(MediaStore.Images.Media.DATA)
         val cursor = managedQuery(contentUri, proj, null, null, null)
-        val column_index = cursor
+        val columnIndex = cursor
             ?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
         cursor?.moveToFirst()
-        return cursor?.getString(column_index!!)!!
+        return cursor?.getString(columnIndex!!)!!
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -205,6 +205,9 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         if (intent.getSerializableExtra("data") != null) {
             issue = intent.getSerializableExtra("data") as Detail
             id = issue!!.id
+
+            Log.d("Get Issue", issue.toString())
+
         }
 
         initPresenter()
@@ -214,6 +217,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
             bindData(issue!!)
             getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
                 issuePresenter.getProjects(page, perPage, sp.getString(getString(R.string.access_token), "")!!)
+
             }
 
         } else {
@@ -235,6 +239,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
             override fun onClick(v: View?) {
 
+                     //Edit issue
                 if (issue != null) {
 
                     when (radio_grup.checkedRadioButtonId) {
@@ -248,7 +253,6 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                     description =
                         RequestBody.create(MediaType.parse("text/plain"), input_description.text.toString())
                     link = RequestBody.create(MediaType.parse("text/plain"), input_link.text.toString())
-
 
                     getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
                         token = sp.getString(getString(R.string.access_token).toString(), "")
@@ -267,6 +271,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                     )
 
                 } else {
+
+//  Create Issue
                     when (radio_grup.checkedRadioButtonId) {
                         R.id.radio_critical -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "1")
                         R.id.radio_minor -> severity_id = RequestBody.create(MediaType.parse("text/plain"), "2")
@@ -323,47 +329,15 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         })
     }
 
+    //    show data in edit text
     private fun bindData(issue: Detail) {
         input_title.setText(issue.title)
         input_description.setText(issue.description)
         input_link.setText(issue.link)
 
-//        var target = object  : Target{
-//            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-////                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            }
-//
-//            override fun onBitmapFailed(errorDrawable: Drawable?) {
-////                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            }
-//
-//            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-//                display_img.setImageBitmap(bitmap)
-////                var file =  File(getCacheDir(), System.currentTimeMillis().toString()+ ".PNG")
-////                file.createNewFile()
-////
-////                var bos =  ByteArrayOutputStream();
-////                bitmap?.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-////                var bitmapdata = bos.toByteArray()
-////
-////                var fos =  FileOutputStream(file)
-////                fos.write(bitmapdata)
-////                fos.flush()
-////                fos.close()
-////
-////                val type: String?
-////                Log.d("AbsolutePath", file.absolutePath)
-////                val extension = MimeTypeMap.getFileExtensionFromUrl(file.absolutePath)
-////                type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-////
-////                val reqfile = RequestBody.create(MediaType.parse(type), file)
-////                image = MultipartBody.Part.createFormData("image", file.name, reqfile)
-
-//            }
-//
-//        }
         Picasso.with(this).load(issue.image.url).into(display_img)
 
+        Log.d("TITLE", issue.title)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -421,7 +395,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
          }*/
         if (requestCode == GALLERY) {
             if (data != null) {
-                val contentURI = data!!.data
+                val contentURI = data.data
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
                     display_img!!.setImageBitmap(bitmap)

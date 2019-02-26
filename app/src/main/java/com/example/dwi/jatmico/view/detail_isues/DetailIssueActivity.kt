@@ -43,6 +43,8 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
     }
 
     override fun showingData(detail: Detail?) {
+        issue = detail
+
         if (user_id != detail?.user?.id) {
             editMenu?.isVisible = false
             deleteMenu?.isVisible = false
@@ -75,9 +77,12 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
         isues_id = intent.getIntExtra("issue_id", isues_id)
         position = intent.getIntExtra("position", 0)
 
+
         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
             issuePresenter.getDetail(isues_id, sp.getString(getString(R.string.access_token), "")!!)
             user_id = sp.getInt("user_id",0)
+
+
         }
 
     }
@@ -101,6 +106,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
         if (id == R.id.menu_edit) {
             val intent = Intent(this@DetailIssueActivity, CreateIssueActivity::class.java)
             intent.putExtra("data", issue)
+
             startActivity(intent)
             return true
         }
