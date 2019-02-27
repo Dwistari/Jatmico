@@ -147,8 +147,8 @@
             android:layout_marginStart="20dp"
             android:layout_marginBottom="14dp"/>
 
-    <EditText
-            android:id="@+id/input_img"
+    <TextView
+            android:id="@+id/image_name"
             android:hint="Insert image"
             android:textSize="12sp"
             android:layout_marginStart="50dp"

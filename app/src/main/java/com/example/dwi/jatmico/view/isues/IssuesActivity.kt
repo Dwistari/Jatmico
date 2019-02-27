@@ -6,6 +6,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -54,6 +55,11 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         adapter.setProject(projects)
 
     }
+
+    override fun onLoadMore() {
+
+    }
+
 
     override fun showErrorAlert(it: Throwable) {
         isLoading = false
@@ -263,18 +269,33 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     private fun initRecylerView() {
         card_recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = IssuesAdapter()
-        adapter.listener = object : IssuesAdapter.Listener {
+//        card_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 
-            override fun onClickItem(isues: Isues, position: Int) {
-                val intent = Intent(this@IssuesActivity, DetailIssueActivity::class.java)
-                intent.putExtra("issue_id", isues.id)
-                intent.putExtra("position", position)
-                startActivityForResult(intent, 2)
+//                val linearLayoutManager = card_recycler_view?.layoutManager as LinearLayoutManager
+//                val countItem = linearLayoutManager.itemCount
+//                val lastVisiblePosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+//                val isLastPosition = countItem.minus(1) == lastVisiblePosition
 
+                adapter.listener = object : IssuesAdapter.Listener {
 
-            }
-        }
-        card_recycler_view.adapter = adapter
+                    override fun onClickItem(isues: Isues, position: Int) {
+                        val intent = Intent(this@IssuesActivity, DetailIssueActivity::class.java)
+                        intent.putExtra("issue_id", isues.id)
+                        intent.putExtra("position", position)
+                        startActivityForResult(intent, 2)
+                    }
+                }
+
+//                if (!isLoading && isLastPosition && page < per_page) {
+//                    showLoading()
+//                    page = page.let { it.plus(1) }
+//                    presenter.getIsues(project_id, page, per_page)
+//                }
+
+                card_recycler_view.adapter = adapter
+//            }
+//        })
     }
 
     private fun initPresenter() {

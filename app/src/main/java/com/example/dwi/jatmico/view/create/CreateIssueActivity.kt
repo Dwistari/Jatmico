@@ -26,15 +26,11 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Detail
-import com.example.dwi.jatmico.data.models.Image
 import com.example.dwi.jatmico.data.models.Isues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.view.home.HomeAdapter
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.activity_create_issue.*
-import kotlinx.android.synthetic.main.item_project.view.*
 import kotlinx.android.synthetic.main.spinner_item.*
 import kotlinx.android.synthetic.main.spinner_item.view.*
 import okhttp3.MediaType
@@ -44,7 +40,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
 
 
 class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
@@ -265,7 +260,6 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                         token = sp.getString(getString(R.string.access_token).toString(), "")
                     }
 
-
                     issuePresenter.updateIssues(
                         id,
                         project_id!!,
@@ -277,12 +271,17 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                         token!!
                     )
 
+                    Toast.makeText(this@CreateIssueActivity, "Data Saved!", Toast.LENGTH_SHORT).show()
+                    finish()
+                    setResult(1)
+
+
                 } else {
 
 //  Create Issue
 
                     if (input_title.text.toString() == "" || input_description.text.toString() == "" ||
-                        input_link.text.toString() == ""
+                        input_link.text.toString() == "" || display_img == null || item_spiner == null
                     ) {
                         Toast.makeText(
                             this@CreateIssueActivity, "Lengkapi data terlebih dahulu",
@@ -313,6 +312,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                         description =
                             RequestBody.create(MediaType.parse("text/plain"), input_description.text.toString())
                         link = RequestBody.create(MediaType.parse("text/plain"), input_link.text.toString())
+
 
                         isues_id = intent.getIntExtra("issue_id", isues_id)
 
@@ -412,7 +412,9 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
 
                         val reqfile = RequestBody.create(MediaType.parse(type), file)
                         image = MultipartBody.Part.createFormData("image", file.name, reqfile)
-                        Log.d("IMAGEPATH", file.path)
+                        image_name.text = file.path
+
+                        Log.d("imagesize", "size =" +file.length())
 
 
                     } catch (e: IOException) {
@@ -452,6 +454,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                     false
                 )
                 compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes)
+//                compressedImageBitmap =  Compressor(this).compressToBitmap(actualImageFile)
+
                 display_img.setImageBitmap(compressedBitmap)
                 val destination = File(
                     Environment.getExternalStorageDirectory(),
@@ -472,8 +476,8 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
 
                 val reqFile = RequestBody.create(MediaType.parse(type), destination)
-                image = MultipartBody.Part.createFormData("avatar", destination.getName(), reqFile)
-                Log.d("imagefromcamera", image.toString())
+                image = MultipartBody.Part.createFormData("image", destination.name, reqFile)
+                image_name.text = destination.toString()
             }
         }
     }
