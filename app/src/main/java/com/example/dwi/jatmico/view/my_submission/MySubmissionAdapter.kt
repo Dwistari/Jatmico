@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.dwi.jatmico.R
-import com.example.dwi.jatmico.data.models.Isues
+import com.example.dwi.jatmico.data.models.Issues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 
 class MySubmissionAdapter  : RecyclerView.Adapter<MySubmissionAdapter.SubViewHolder>() {
-    private var submission: MutableList<Isues> = ArrayList()
+    private var submission: MutableList<Issues> = ArrayList()
     private var project: MutableList<Project> = ArrayList()
     private var severity: MutableList<Severity> = ArrayList()
     var listener: Listener? = null
@@ -29,13 +29,13 @@ class MySubmissionAdapter  : RecyclerView.Adapter<MySubmissionAdapter.SubViewHol
     override fun onBindViewHolder(holder: SubViewHolder, position: Int) {
         holder.itemView.bug_name.text = submission [position].title
         holder.itemView.descripsion.text  = submission [position].description
-        holder.itemView.name_user.text = submission [position].user.name
-        holder.itemView.severity.text = submission [position].severity.name
+        holder.itemView.name_user.text = submission [position].user?.name
+        holder.itemView.severity.text = submission [position].severity?.name
         holder.itemView.time.text = submission[position].updated_at
 
-        holder.itemView.severity.setBackgroundColor(Color.parseColor(submission[position].severity.color))
+        holder.itemView.severity.setBackgroundColor(Color.parseColor(submission[position].severity?.color))
 
-        Picasso.with(holder.itemView.getContext()).load(submission[position].user.image.url)
+        Picasso.with(holder.itemView.getContext()).load(submission[position].user?.image?.url)
             .into(holder.itemView.profile_user)
 
 // ---Show detail isues--
@@ -53,11 +53,11 @@ class MySubmissionAdapter  : RecyclerView.Adapter<MySubmissionAdapter.SubViewHol
 
     }
     interface Listener {
-        fun onClickItem(isues: Isues, position: Int)
+        fun onClickItem(issues: Issues, position: Int)
     }
 
 //show isues
-    fun setData(submission: MutableList<Isues>) {
+    fun setData(submission: MutableList<Issues>) {
         this.submission = submission
         notifyDataSetChanged()
     }

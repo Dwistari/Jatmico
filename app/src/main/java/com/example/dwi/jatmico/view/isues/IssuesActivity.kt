@@ -1,30 +1,33 @@
 package com.example.dwi.jatmico.view.isues
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.example.dwi.jatmico.data.models.Isues
+import com.example.dwi.jatmico.data.models.Issues
 import kotlinx.android.synthetic.main.activity_issues.*
 import android.view.Menu
 import android.view.MenuItem
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
+import com.example.dwi.jatmico.utils.OnScrollListener
 import com.example.dwi.jatmico.view.create.CreateIssueActivity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class IssuesActivity : AppCompatActivity(), IssuesView {
-
     private lateinit var adapter: IssuesAdapter
     private lateinit var presenter: IssuesPresenter
 
@@ -32,14 +35,15 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     private var project_id = 0
     private var project_name = ""
     private var page = 1
-    private var per_page = 20
+    private var per_page = 5
     private var isDataEnd = false
     private var isLoading = false
-
+    private var mContext: Context? = null
+    private var layoutManager: LinearLayoutManager? = null
     private var severityId: Int? = null
     private var severities: MutableList<Severity>? = ArrayList()
     private var severitiesNames: MutableList<String>? = ArrayList()
-    private var issuesData: MutableList<Isues>? = null
+    private var issuesData: MutableList<Issues>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
 
 
@@ -56,11 +60,6 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
     }
 
-    override fun onLoadMore() {
-
-    }
-
-
     override fun showErrorAlert(it: Throwable) {
         isLoading = false
         swipe_refresh?.isRefreshing = false
@@ -68,12 +67,19 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         Toast.makeText(this@IssuesActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
-    override fun showData(isues: MutableList<Isues>) {
-        Log.d("data_size", isues.size.toString())
-        issuesData = isues
-        adapter.setData(filterSeverity(isues))
+    override fun showData(issues: MutableList<Issues>) {
+        issuesData = issues
+        adapter.setData(filterSeverity(issues))
         swipe_refresh?.isRefreshing = false
+
     }
+
+    override fun addData(issues: MutableList<Issues>) {
+        adapter.hideLoading()
+        isLoading = false
+        adapter.addData(filterSeverity(issues))
+    }
+
 
     //show severities data
     override fun showSeverity(severities: MutableList<Severity>) {
@@ -89,16 +95,16 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     }
 
 
-    private fun filterSeverity(severity: MutableList<Isues>): MutableList<Isues> {
+    private fun filterSeverity(severity: MutableList<Issues>): MutableList<Issues> {
         Log.d("filterSeverity", severity.toString())
 
-        val filterSeverity: MutableList<Isues> = ArrayList()
+        val filterSeverity: MutableList<Issues> = ArrayList()
         if (severityId != null) {
 
             severity.forEach {
                 Log.d("filter", "sev id: ${it.id}")
 
-                if (severityId == it.severity.id) {
+                if (severityId == it.severity?.id) {
 
                     filterSeverity.add(it)
 
@@ -141,13 +147,12 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
             refreshItem()
         }
 
-
-
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener {
             val intent = Intent(this@IssuesActivity, CreateIssueActivity::class.java)
             startActivityForResult(intent, 1)
 
         }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -180,14 +185,14 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
             builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1, null)
 
 
-            builder.setPositiveButton("OK") { dialog, which ->
+            builder.setPositiveButton("OK") { dialog, _ ->
                 severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
 
                 issuesData?.let { adapter.setData(filterSeverity(it)) }
 
             }
 
-            builder.setNegativeButton("CANCEL") { dialog, which ->
+            builder.setNegativeButton("CANCEL") { dialog, _ ->
                 dialog.dismiss()
             }
 
@@ -202,19 +207,21 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
                 if (position == 0) {
                     //DESC DATE
 
-                    Collections.sort(issuesData, object : Comparator<Isues> {
-                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                    Collections.sort(issuesData, object : Comparator<Issues?> {
+                        override fun compare(o1: Issues?, o2: Issues?): Int {
                             return o2?.createdAt?.compareTo(o1?.createdAt!!)!!
                         }
 
                     })
-                    issuesData?.let { adapter.setData(it) }
+                    issuesData?.let {
+                        adapter.setData(it)
+                    }
 
                 } else if (position == 1) {
                     //ASC DATE
 
-                    Collections.sort(issuesData, object : Comparator<Isues> {
-                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                    Collections.sort(issuesData, object : Comparator<Issues?> {
+                        override fun compare(o1: Issues?, o2: Issues?): Int {
                             return o1?.createdAt?.compareTo(o2?.createdAt!!)!!
                         }
 
@@ -225,11 +232,11 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
                     //ASC Severity Id
 
                     for (project in issuesData!!) {
-                        Log.d("unsorteddata", project.severity.id.toString())
+                        Log.d("unsorteddata", project.severity?.id.toString())
                     }
 
-                    Collections.sort(issuesData, object : Comparator<Isues> {
-                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                    Collections.sort(issuesData, object : Comparator<Issues?> {
+                        override fun compare(o1: Issues?, o2: Issues?): Int {
                             return o1?.severity?.id!!.compareTo(o2?.severity!!.id)
                         }
 
@@ -242,10 +249,10 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
                     //DESC Severity Id
 
                     for (project in issuesData!!) {
-                        Log.d("unsorteddata", project.severity.id.toString())
+                        Log.d("unsorteddata", project.severity?.id.toString())
                     }
-                    Collections.sort(issuesData, object : Comparator<Isues> {
-                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                    Collections.sort(issuesData, object : Comparator<Issues?> {
+                        override fun compare(o1: Issues?, o2: Issues?): Int {
                             return o2?.severity?.id!!.compareTo(o1?.severity!!.id)
                         }
 
@@ -253,7 +260,9 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
                     Log.d("sorteddata", issuesData.toString())
 
-                    issuesData?.let { adapter.setData(it) }
+                    issuesData?.let {
+                        adapter.setData(it)
+                    }
                 }
 
 
@@ -267,35 +276,40 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
 
     private fun initRecylerView() {
-        card_recycler_view.layoutManager = LinearLayoutManager(this)
+//        card_recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = IssuesAdapter()
-//        card_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        layoutManager = LinearLayoutManager(mContext)
+        card_recycler_view.layoutManager = layoutManager
+        (card_recycler_view.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
+        card_recycler_view.addOnScrollListener(object : OnScrollListener(layoutManager) {
+            override fun loadMoreItem() {
+                isLoading = true
+                adapter.setLoading()
+                Handler().postDelayed({
+                    page += 1
+                    presenter.getIsues(project_id, page, per_page)
+                }, 500)
+            }
 
-//                val linearLayoutManager = card_recycler_view?.layoutManager as LinearLayoutManager
-//                val countItem = linearLayoutManager.itemCount
-//                val lastVisiblePosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
-//                val isLastPosition = countItem.minus(1) == lastVisiblePosition
+            override fun isDataEnd(): Boolean {
+                return isDataEnd
+            }
 
-                adapter.listener = object : IssuesAdapter.Listener {
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
+        })
 
-                    override fun onClickItem(isues: Isues, position: Int) {
-                        val intent = Intent(this@IssuesActivity, DetailIssueActivity::class.java)
-                        intent.putExtra("issue_id", isues.id)
-                        intent.putExtra("position", position)
-                        startActivityForResult(intent, 2)
-                    }
-                }
+        card_recycler_view.adapter = adapter
+        adapter.listener = object : IssuesAdapter.Listener {
 
-//                if (!isLoading && isLastPosition && page < per_page) {
-//                    showLoading()
-//                    page = page.let { it.plus(1) }
-//                    presenter.getIsues(project_id, page, per_page)
-//                }
-
-                card_recycler_view.adapter = adapter
-//            }
-//        })
+            override fun onClickItem(issues: Issues, position: Int) {
+                val intent = Intent(this@IssuesActivity, DetailIssueActivity::class.java)
+                intent.putExtra("issue_id", issues.id)
+                intent.putExtra("position", position)
+                startActivityForResult(intent, 2)
+            }
+        }
     }
 
     private fun initPresenter() {
@@ -317,7 +331,6 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
                 if (resultCode == RESULT_OK) {
                     presenter.getIsues(
                         project_id, page, per_page
-//                                    position?.let { adapter.addItem(it) }
                     )
                 }
             }
@@ -325,4 +338,3 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         }
     }
 }
-

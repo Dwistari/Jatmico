@@ -7,7 +7,7 @@ import java.io.Serializable
 class IsuesResponse (
     @SerializedName("response")
     @Expose
-    var isues: MutableList<Isues>
+    var isues: MutableList<Issues>
     )
 
     data class ImageIsues(
@@ -37,37 +37,37 @@ class IsuesResponse (
         var url: String?
     )
 
-    data  class Isues(
+    data  class Issues(
         @SerializedName("id")
         @Expose
-        var id: Int,
+        var id: Int?,
         @SerializedName("project_id")
         @Expose
-        var projectId: Int,
+        var projectId: Int?,
         @SerializedName("user")
         @Expose
-        var user: User,
+        var user: User?,
         @SerializedName("title")
         @Expose
-        var title: String,
+        var title: String?,
         @SerializedName("description")
         @Expose
-        var description: String,
+        var description: String?,
         @SerializedName("severity")
         @Expose
-        var severity: Severity,
+        var severity: Severity?,
         @SerializedName("link")
         @Expose
-        var link: String,
+        var link: String?,
         @SerializedName("image")
         @Expose
-        var image: ImageIsues,
+        var image: ImageIsues?,
         @SerializedName ("created_at")
         @Expose
-        var createdAt : String,
+        var createdAt: String?,
         @SerializedName ("updated_at")
         @Expose
-        var updated_at : String
+        var updated_at: String?
     ): Serializable
         
     data class ThumbIsues(

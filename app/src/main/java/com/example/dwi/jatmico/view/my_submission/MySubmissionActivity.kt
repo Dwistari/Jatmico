@@ -14,7 +14,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.dwi.jatmico.R
-import com.example.dwi.jatmico.data.models.Isues
+import com.example.dwi.jatmico.data.models.Issues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
@@ -33,7 +33,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     private var projectNames: MutableList<String>? = null
     private var severities: MutableList<Severity>? = ArrayList()
     private var severitiesNames: MutableList<String>? = ArrayList()
-    private var submissionData: MutableList<Isues>? = null
+    private var submissionData: MutableList<Issues>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
 //    var myString = "Select Project"
 
@@ -52,7 +52,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         Toast.makeText(this@MySubmissionActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
-    override fun showData(submission: MutableList<Isues>) {
+    override fun showData(submission: MutableList<Issues>) {
         Log.d("data_size", submission.size.toString())
         submissionData = submission
         adapter.setData(filterSubmission(submission))
@@ -155,9 +155,9 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
 
 
-    private fun filterSubmission(submission: MutableList<Isues>): MutableList<Isues> {
+    private fun filterSubmission(submission: MutableList<Issues>): MutableList<Issues> {
         Log.d("filterSubmission", submission.size.toString())
-        val filteredSubmission: MutableList<Isues> = ArrayList()
+        val filteredSubmission: MutableList<Issues> = ArrayList()
         if (sortId != -1) {
 
             submission.forEach {
@@ -177,16 +177,16 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
     }
 
-    private fun filterSeverity(severity: MutableList<Isues>): MutableList<Isues> {
+    private fun filterSeverity(severity: MutableList<Issues>): MutableList<Issues> {
         Log.d("filterSeverity", severity.toString())
 
-        val filterSeverity: MutableList<Isues> = ArrayList()
+        val filterSeverity: MutableList<Issues> = ArrayList()
         if (severityId != null) {
 
             severity.forEach {
                 Log.d("filter", "sev id: ${it.id}")
 
-                if (severityId == it.severity.id) {
+                if (severityId == it.severity?.id) {
 
                     filterSeverity.add(it)
 
@@ -296,8 +296,8 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                 if (position == 0) {
                     //DESC DATE
 
-                    Collections.sort(submissionData, object : Comparator<Isues> {
-                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                    Collections.sort(submissionData, object : Comparator<Issues> {
+                        override fun compare(o1: Issues?, o2: Issues?): Int {
                             return o2?.createdAt?.compareTo(o1?.createdAt!!)!!
                         }
 
@@ -307,8 +307,8 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                 } else if (position == 1) {
                     //ASC DATE
 
-                    Collections.sort(submissionData, object : Comparator<Isues> {
-                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                    Collections.sort(submissionData, object : Comparator<Issues> {
+                        override fun compare(o1: Issues?, o2: Issues?): Int {
                             return o1?.createdAt?.compareTo(o2?.createdAt!!)!!
                         }
 
@@ -319,11 +319,11 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                     //ASC Severity Id
 
                     for (project in submissionData!!) {
-                        Log.d("unsorteddata", project.severity.id.toString())
+                        Log.d("unsorteddata", project.severity?.id.toString())
                     }
 
-                    Collections.sort(submissionData, object : Comparator<Isues> {
-                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                    Collections.sort(submissionData, object : Comparator<Issues> {
+                        override fun compare(o1: Issues?, o2: Issues?): Int {
                             return o1?.severity?.id!!.compareTo(o2?.severity!!.id)
                         }
 
@@ -336,10 +336,10 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                     //DESC Severity Id
 
                     for (project in submissionData!!) {
-                        Log.d("unsorteddata", project.severity.id.toString())
+                        Log.d("unsorteddata", project.severity?.id.toString())
                     }
-                    Collections.sort(submissionData, object : Comparator<Isues> {
-                        override fun compare(o1: Isues?, o2: Isues?): Int {
+                    Collections.sort(submissionData, object : Comparator<Issues> {
+                        override fun compare(o1: Issues?, o2: Issues?): Int {
                             return o2?.severity?.id!!.compareTo(o1?.severity!!.id)
                         }
 
@@ -365,7 +365,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         adapter = MySubmissionAdapter()
         adapter.listener = object : MySubmissionAdapter.Listener {
 
-            override fun onClickItem(submission: Isues, position: Int) {
+            override fun onClickItem(submission: Issues, position: Int) {
                 val intent = Intent(this@MySubmissionActivity, DetailIssueActivity::class.java)
                 intent.putExtra("issue_id", submission.id)
                 intent.putExtra("position", position)

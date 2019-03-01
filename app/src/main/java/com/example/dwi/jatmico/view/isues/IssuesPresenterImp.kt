@@ -8,7 +8,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 class IssuesPresenterImp(
-    private val sharedPreferences: SharedPreferences) : IssuesPresenter {
+    private val sharedPreferences: SharedPreferences
+) : IssuesPresenter {
     private lateinit var view: IssuesView
     private var interactor: IsuesInteractor = IsuesInteractor(sharedPreferences)
     private var interactorry: SeverityInteractor = SeverityInteractor(sharedPreferences)
@@ -16,14 +17,20 @@ class IssuesPresenterImp(
 
 
     override fun getIsues(project_id: Int, page: Int, per_page: Int) {
-        view.showLoading()
+        if (page == 1) {
+            view.showLoading()
+        }
         interactor.getIsues(project_id, page, per_page)
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
-                    view.dismissLoading()
-                    view.showData(it.isues)
+                    if (page == 1) {
+                        view.dismissLoading()
+                        view.showData(it.isues)
+                    } else {
+                        view.addData(it.isues)
+                    }
                 },
                 {
                     view.showErrorAlert(it)
@@ -35,6 +42,7 @@ class IssuesPresenterImp(
                 )
             }
     }
+
     override fun getSeverity(token: String) {
         view.showLoading()
         interactorry.getSeverity()

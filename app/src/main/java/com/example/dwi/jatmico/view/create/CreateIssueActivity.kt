@@ -26,7 +26,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Detail
-import com.example.dwi.jatmico.data.models.Isues
+import com.example.dwi.jatmico.data.models.Issues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.view.home.HomeAdapter
 import com.squareup.picasso.Picasso
@@ -47,7 +47,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     private var issue: Detail? = null
     private lateinit var adapter: HomeAdapter
     private lateinit var issuePresenter: CreateIssuePresenter
-    private var issuesData: MutableList<Isues>? = null
+    private var issuesData: MutableList<Issues>? = null
 
     var id: Int = 0
     var token: String? = null
@@ -86,7 +86,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     }
 
 
-    override fun showDataIssue(isues: MutableList<Isues>) {
+    override fun showDataIssue(isues: MutableList<Issues>) {
         Log.d("data_size", isues.toString())
         issuesData = isues
     }
