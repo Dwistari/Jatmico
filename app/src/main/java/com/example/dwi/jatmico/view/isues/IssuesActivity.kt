@@ -20,6 +20,7 @@ import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.utils.OnScrollListener
+import com.example.dwi.jatmico.view.BaseActivity
 import com.example.dwi.jatmico.view.create.CreateIssueActivity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
@@ -27,15 +28,14 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class IssuesActivity : AppCompatActivity(), IssuesView {
+class IssuesActivity : BaseActivity(), IssuesView {
     private lateinit var adapter: IssuesAdapter
     private lateinit var presenter: IssuesPresenter
 
-    var access_token = ""
     private var project_id = 0
     private var project_name = ""
     private var page = 1
-    private var per_page = 5
+    private var per_page = 10
     private var isDataEnd = false
     private var isLoading = false
     private var mContext: Context? = null
@@ -46,6 +46,30 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
     private var issuesData: MutableList<Issues>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
 
+    override fun getLayout(): Int {
+        return R.layout.activity_issues
+    }
+
+    override fun onViewReady() {
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        project_id = intent.getIntExtra("project_id", project_id)
+        project_name = intent.getStringExtra("project_name")
+        supportActionBar?.title = project_name
+        initPresenter()
+        initRecylerView()
+        presenter.getSeverity()
+        presenter.getProjects(page, per_page)
+        swipe_refresh?.setOnRefreshListener {
+            refreshItem()
+        }
+
+        fab.setOnClickListener {
+            val intent = Intent(this@IssuesActivity, CreateIssueActivity::class.java)
+            startActivityForResult(intent, 1)
+
+        }
+    }
 
     override fun showLoading() {
         loading.visibility = View.VISIBLE
@@ -57,7 +81,7 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
 
     override fun showingProject(projects: MutableList<Project>) {
         adapter.setProject(projects)
-
+        presenter.getIsues(project_id, page, per_page)
     }
 
     override fun showErrorAlert(it: Throwable) {
@@ -80,6 +104,13 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         adapter.addData(filterSeverity(issues))
     }
 
+    override fun showEmptyAlert() {
+        Toast.makeText(this@IssuesActivity, "No issues found", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun dataEnd() {
+        isDataEnd = true
+    }
 
     //show severities data
     override fun showSeverity(severities: MutableList<Severity>) {
@@ -125,34 +156,6 @@ class IssuesActivity : AppCompatActivity(), IssuesView {
         isLoading = false
         isDataEnd = false
         presenter.getIsues(project_id, page, per_page)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_issues)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        initPresenter()
-        initRecylerView()
-        project_id = intent.getIntExtra("project_id", project_id)
-        project_name = intent.getStringExtra("project_name")
-
-        presenter.getIsues(project_id, page, per_page)
-        presenter.getSeverity(access_token)
-        presenter.getProjects(page, per_page)
-
-
-        supportActionBar?.title = project_name
-        swipe_refresh?.setOnRefreshListener {
-            refreshItem()
-        }
-
-        fab.setOnClickListener {
-            val intent = Intent(this@IssuesActivity, CreateIssueActivity::class.java)
-            startActivityForResult(intent, 1)
-
-        }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

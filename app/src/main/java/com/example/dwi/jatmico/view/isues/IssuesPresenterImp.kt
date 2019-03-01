@@ -27,9 +27,27 @@ class IssuesPresenterImp(
                 {
                     if (page == 1) {
                         view.dismissLoading()
-                        view.showData(it.isues)
+                        if (it.isues.size != 0) {
+                            if (it.isues.size >= per_page) {
+                                view.showData(it.isues)
+                            } else {
+                                view.showData(it.isues)
+                                view.dataEnd()
+                            }
+                        } else {
+                            view.showEmptyAlert()
+                        }
                     } else {
-                        view.addData(it.isues)
+                        if (it.isues.size != 0) {
+                            if (it.isues.size >= per_page) {
+                                view.addData(it.isues)
+                            } else {
+                                view.addData(it.isues)
+                                view.dataEnd()
+                            }
+                        } else {
+                            view.dataEnd()
+                        }
                     }
                 },
                 {
@@ -43,14 +61,12 @@ class IssuesPresenterImp(
             }
     }
 
-    override fun getSeverity(token: String) {
-        view.showLoading()
+    override fun getSeverity() {
         interactorry.getSeverity()
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
-                    view.dismissLoading()
                     view.showSeverity(it.severity)
                 },
                 {
@@ -71,7 +87,6 @@ class IssuesPresenterImp(
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
-                    view.dismissLoading()
                     view.showingProject(it.projects)
                 },
                 {

@@ -59,7 +59,7 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.onBind(position)
             }
             is LoadingViewHolder -> {
-                holder.onBind(position)
+                holder.onBind()
             }
         }
     }
@@ -79,7 +79,6 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
         fun onBind(position: Int) {
-            Log.d("cek_issuse", issues.size.toString()+", "+position.toString())
             itemView.setOnClickListener {
                 listener?.onClickItem(issues[position], position)
             }
@@ -102,11 +101,7 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class LoadingViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
         val loading = itemView?.findViewById<LinearLayout>(R.id.loading)
 
-        fun onBind(position: Int) {
-//            if (issues.get(position) != null){
-////                loading =
-//            }
-        }
+        fun onBind() {}
     }
 
 
@@ -137,10 +132,8 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun addData(issues: MutableList<Issues>) {
-        issues.addAll(issues)
+        this.issues.addAll(issues)
         notifyItemRangeInserted(itemCount, issues.size)
-//        notifyDataSetChanged()
-
     }
 
     fun setLoading() {

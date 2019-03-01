@@ -12,4 +12,6 @@ interface IssuesView {
     fun addData(issues: MutableList<Issues>)
     fun showSeverity(severities: MutableList<Severity>)
     fun showingProject(projects: MutableList<Project>)
+    fun showEmptyAlert()
+    fun dataEnd()
 }
