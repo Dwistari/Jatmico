@@ -43,7 +43,7 @@ class HomeActivity : AppCompatActivity(), HomeView {
         if (me?.image?.url != null) {
             Picasso.with(this).load(me.image.url).into(profile)
         }else{
-            profile?.setImageResource(R.drawable.ic_person_black)
+            profile?.setImageResource(R.drawable.ic_profile)
         }
 
     }
@@ -53,7 +53,6 @@ class HomeActivity : AppCompatActivity(), HomeView {
     }
 
     override fun showLoading() {
-
         loading.visibility = View.GONE
     }
 

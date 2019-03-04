@@ -24,6 +24,7 @@ import com.example.dwi.jatmico.view.BaseActivity
 import com.example.dwi.jatmico.view.create.CreateIssueActivity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
+import kotlinx.android.synthetic.main.activity_create_issue.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -151,192 +152,193 @@ class IssuesActivity : BaseActivity(), IssuesView {
         }
     }
 
-    private fun refreshItem() {
-        page = 1
-        isLoading = false
-        isDataEnd = false
-        presenter.getIsues(project_id, page, per_page)
-    }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+private fun refreshItem() {
+    page = 1
+    isLoading = false
+    isDataEnd = false
+    presenter.getIsues(project_id, page, per_page)
+}
+
+override fun onSupportNavigateUp(): Boolean {
+    onBackPressed()
+    return true
+}
+
+override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    menuInflater.inflate(R.menu.menu_item, menu)
+    return true
+}
+
+
+override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+    val id = item?.getItemId()
+
+    if (id == R.id.action_search) {
+
+        val intent = Intent(this@IssuesActivity, SearchActivity::class.java)
+        intent.putExtra("project_id", project_id)
+        startActivity(intent)
         return true
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_item, menu)
-        return true
-    }
-
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-
-        val id = item?.getItemId()
-
-        if (id == R.id.action_search) {
-
-            val intent = Intent(this@IssuesActivity, SearchActivity::class.java)
-            intent.putExtra("project_id", project_id)
-            startActivity(intent)
-            return true
-        }
-        if (id == R.id.filter) {
-            Log.d("SEVERITY", severitiesNames.toString())
-            val dialog: AlertDialog?
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Severity")
-            builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1, null)
+    if (id == R.id.filter) {
+        Log.d("SEVERITY", severitiesNames.toString())
+        val dialog: AlertDialog?
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Severity")
+        builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1, null)
 
 
-            builder.setPositiveButton("OK") { dialog, _ ->
-                severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
+        builder.setPositiveButton("OK") { dialog, _ ->
+            severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
 
-                issuesData?.let { adapter.setData(filterSeverity(it)) }
-
-            }
-
-            builder.setNegativeButton("CANCEL") { dialog, _ ->
-                dialog.dismiss()
-            }
-
-            dialog = builder.create()
-            dialog?.show()
+            issuesData?.let { adapter.setData(filterSeverity(it)) }
 
         }
 
-        if (id == R.id.sort_by) {
-            val builder = AlertDialog.Builder(this)
-            builder.setItems(sort) { dialog: DialogInterface, position: Int ->
-                if (position == 0) {
-                    //DESC DATE
+        builder.setNegativeButton("CANCEL") { dialog, _ ->
+            dialog.dismiss()
+        }
 
-                    Collections.sort(issuesData, object : Comparator<Issues?> {
-                        override fun compare(o1: Issues?, o2: Issues?): Int {
-                            return o2?.createdAt?.compareTo(o1?.createdAt!!)!!
-                        }
+        dialog = builder.create()
+        dialog?.show()
 
-                    })
-                    issuesData?.let {
-                        adapter.setData(it)
+    }
+
+    if (id == R.id.sort_by) {
+        val builder = AlertDialog.Builder(this)
+        builder.setItems(sort) { dialog: DialogInterface, position: Int ->
+            if (position == 0) {
+                //DESC DATE
+
+                Collections.sort(issuesData, object : Comparator<Issues?> {
+                    override fun compare(o1: Issues?, o2: Issues?): Int {
+                        return o2?.createdAt?.compareTo(o1?.createdAt!!)!!
                     }
 
-                } else if (position == 1) {
-                    //ASC DATE
-
-                    Collections.sort(issuesData, object : Comparator<Issues?> {
-                        override fun compare(o1: Issues?, o2: Issues?): Int {
-                            return o1?.createdAt?.compareTo(o2?.createdAt!!)!!
-                        }
-
-                    })
-                    issuesData?.let { adapter.setData(it) }
-
-                } else if (position == 2) {
-                    //ASC Severity Id
-
-                    for (project in issuesData!!) {
-                        Log.d("unsorteddata", project.severity?.id.toString())
-                    }
-
-                    Collections.sort(issuesData, object : Comparator<Issues?> {
-                        override fun compare(o1: Issues?, o2: Issues?): Int {
-                            return o1?.severity?.id!!.compareTo(o2?.severity!!.id)
-                        }
-
-                    })
-
-                    Log.d("sorteddata", issuesData.toString())
-                    issuesData?.let { adapter.setData(it) }
-
-                } else {
-                    //DESC Severity Id
-
-                    for (project in issuesData!!) {
-                        Log.d("unsorteddata", project.severity?.id.toString())
-                    }
-                    Collections.sort(issuesData, object : Comparator<Issues?> {
-                        override fun compare(o1: Issues?, o2: Issues?): Int {
-                            return o2?.severity?.id!!.compareTo(o1?.severity!!.id)
-                        }
-
-                    })
-
-                    Log.d("sorteddata", issuesData.toString())
-
-                    issuesData?.let {
-                        adapter.setData(it)
-                    }
+                })
+                issuesData?.let {
+                    adapter.setData(it)
                 }
 
+            } else if (position == 1) {
+                //ASC DATE
 
+                Collections.sort(issuesData, object : Comparator<Issues?> {
+                    override fun compare(o1: Issues?, o2: Issues?): Int {
+                        return o1?.createdAt?.compareTo(o2?.createdAt!!)!!
+                    }
+
+                })
+                issuesData?.let { adapter.setData(it) }
+
+            } else if (position == 2) {
+                //ASC Severity Id
+
+                for (project in issuesData!!) {
+                    Log.d("unsorteddata", project.severity?.id.toString())
+                }
+
+                Collections.sort(issuesData, object : Comparator<Issues?> {
+                    override fun compare(o1: Issues?, o2: Issues?): Int {
+                        return o1?.severity?.id!!.compareTo(o2?.severity!!.id)
+                    }
+
+                })
+
+                Log.d("sorteddata", issuesData.toString())
+                issuesData?.let { adapter.setData(it) }
+
+            } else {
+                //DESC Severity Id
+
+                for (project in issuesData!!) {
+                    Log.d("unsorteddata", project.severity?.id.toString())
+                }
+                Collections.sort(issuesData, object : Comparator<Issues?> {
+                    override fun compare(o1: Issues?, o2: Issues?): Int {
+                        return o2?.severity?.id!!.compareTo(o1?.severity!!.id)
+                    }
+
+                })
+
+                Log.d("sorteddata", issuesData.toString())
+
+                issuesData?.let {
+                    adapter.setData(it)
+                }
             }
-            val dialog: AlertDialog? = builder.create()
-            dialog?.show()
+
+
+        }
+        val dialog: AlertDialog? = builder.create()
+        dialog?.show()
+    }
+
+    return super.onOptionsItemSelected(item)
+}
+
+
+private fun initRecylerView() {
+    adapter = IssuesAdapter()
+    layoutManager = LinearLayoutManager(mContext)
+    card_recycler_view.layoutManager = layoutManager
+    (card_recycler_view.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
+    card_recycler_view.addOnScrollListener(object : OnScrollListener(layoutManager) {
+        override fun loadMoreItem() {
+            isLoading = true
+            adapter.setLoading()
+            Handler().postDelayed({
+                page += 1
+                presenter.getIsues(project_id, page, per_page)
+            }, 500)
         }
 
-        return super.onOptionsItemSelected(item)
-    }
+        override fun isDataEnd(): Boolean {
+            return isDataEnd
+        }
 
+        override fun isLoading(): Boolean {
+            return isLoading
+        }
+    })
 
-    private fun initRecylerView() {
-        adapter = IssuesAdapter()
-        layoutManager = LinearLayoutManager(mContext)
-        card_recycler_view.layoutManager = layoutManager
-        (card_recycler_view.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-        card_recycler_view.addOnScrollListener(object : OnScrollListener(layoutManager) {
-            override fun loadMoreItem() {
-                isLoading = true
-                adapter.setLoading()
-                Handler().postDelayed({
-                    page += 1
-                    presenter.getIsues(project_id, page, per_page)
-                }, 500)
-            }
+    card_recycler_view.adapter = adapter
+    adapter.listener = object : IssuesAdapter.Listener {
 
-            override fun isDataEnd(): Boolean {
-                return isDataEnd
-            }
-
-            override fun isLoading(): Boolean {
-                return isLoading
-            }
-        })
-
-        card_recycler_view.adapter = adapter
-        adapter.listener = object : IssuesAdapter.Listener {
-
-            override fun onClickItem(issues: Issues, position: Int) {
-                val intent = Intent(this@IssuesActivity, DetailIssueActivity::class.java)
-                intent.putExtra("issue_id", issues.id)
-                intent.putExtra("position", position)
-                startActivityForResult(intent, 2)
-            }
+        override fun onClickItem(issues: Issues, position: Int) {
+            val intent = Intent(this@IssuesActivity, DetailIssueActivity::class.java)
+            intent.putExtra("issue_id", issues.id)
+            intent.putExtra("position", position)
+            startActivityForResult(intent, 2)
         }
     }
+}
 
-    private fun initPresenter() {
-        presenter = IssuesPresenterImp(getSharedPreferences("Jatmico", MODE_PRIVATE))
-        presenter.initView(this)
-    }
+private fun initPresenter() {
+    presenter = IssuesPresenterImp(getSharedPreferences("Jatmico", MODE_PRIVATE))
+    presenter.initView(this)
+}
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // Check which request we're responding to
-        if (requestCode == 2) {
-            // Make sure the request was successful
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    // Check which request we're responding to
+    if (requestCode == 2) {
+        // Make sure the request was successful
+        if (resultCode == RESULT_OK) {
+            val position = data?.getIntExtra("position", 0)
+            Log.d("position_received", position.toString())
+            position?.let { adapter.deleteItem(it) }
+        }
+
+        if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                val position = data?.getIntExtra("position", 0)
-                Log.d("position_received", position.toString())
-                position?.let { adapter.deleteItem(it) }
+                presenter.getIsues(
+                    project_id, page, per_page
+                )
             }
-
-            if (requestCode == 1) {
-                if (resultCode == RESULT_OK) {
-                    presenter.getIsues(
-                        project_id, page, per_page
-                    )
-                }
-            }
-
         }
+
     }
+}
 }

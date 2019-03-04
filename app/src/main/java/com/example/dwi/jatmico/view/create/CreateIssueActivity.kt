@@ -59,6 +59,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     var image: MultipartBody.Part? = null
 
     private var isues_id = 0
+    private var show_project_id: Int = 0
     private val GALLERY = 1
     private val CAMERA = 2
     private var page = 1
@@ -92,10 +93,25 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
     }
 
 
+//    private fun filterProject(projects: MutableList<Project>): MutableList<Project> {
+//        show_project_id = intent.getIntExtra("project_id", show_project_id)
+//        val filterProject: MutableList<Project> = ArrayList()
+//        projects.forEach {
+//            if (show_project_id == it.id) {
+//                filterProject.add(it)
+//            }
+//            return filterProject
+//        }
+//        return projects
+//    }
+
+
+
     //--SPINNER SHOW DATA
     override fun showData(projects: MutableList<Project>) {
         Log.d("Show_Project", projects.size.toString())
         adapter.setData(projects)
+//        adapter.setData(filterProject(projects))
 
         projects.add(0, Project(-1, "Select Project", null, null, null))
 
@@ -112,8 +128,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                     if (Intent.ACTION_SEND != intent.action && intent.type == null) {
-                        project_id =
-                            RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
+                        project_id = RequestBody.create(MediaType.parse("text/plain"), projects.get(position).id.toString())
 
                         spinnerArrayAdapter.notifyDataSetChanged()
                     }

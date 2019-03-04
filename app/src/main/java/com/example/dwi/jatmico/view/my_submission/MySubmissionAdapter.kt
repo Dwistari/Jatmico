@@ -15,6 +15,8 @@ import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MySubmissionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     
@@ -80,13 +82,18 @@ class MySubmissionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 Picasso.with(itemView.getContext()).load(submission[position].user?.image?.url)
                     .into(itemView.profile_user)
             }else{
-                imageUser?.setImageResource(R.drawable.ic_person_black)
+                imageUser?.setImageResource(R.drawable.ic_profile)
             }
+            val date = (submission[position].updated_at)
+            val input = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+            val dates = input.parse(date)
+            val output = SimpleDateFormat("dd/MMMM/yy", Locale.US)
+
+            time?.text = output.format(dates)
 
             bugname?.text = submission[position].title
             description?.text =submission[position].description
             username?.text = submission[position].user?.name
-            time?.text = submission[position].updated_at
             severity?.text = submission[position].severity?.name
             severity?.setBackgroundColor(Color.parseColor(submission[position].severity?.color))
 

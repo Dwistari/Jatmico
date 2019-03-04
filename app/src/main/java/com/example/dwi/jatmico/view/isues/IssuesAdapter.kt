@@ -2,7 +2,6 @@ package com.example.dwi.jatmico.view.isues
 
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,9 @@ import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.Locale
 
 class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -84,16 +86,27 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             if (issues[position].user?.image?.url != null) {
                 Picasso.with(itemView.getContext()).load(issues[position].user?.image?.url)
-                 .into(itemView.profile_user)
-            }else{
-                imageUser?.setImageResource(R.drawable.ic_person_black)
+                    .into(itemView.profile_user)
+            } else {
+                imageUser?.setImageResource(R.drawable.ic_profile)
             }
-           bugname?.text = issues[position].title
-           description?.text =issues[position].description
-           username?.text = issues[position].user?.name
-           time?.text = issues[position].updated_at
-           severity?.text = issues[position].severity?.name
-           severity?.setBackgroundColor(Color.parseColor(issues[position].severity?.color))
+
+//            val sf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
+
+            val date = (issues[position].updated_at)
+            val input = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+            val dates = input.parse(date)
+            val output = SimpleDateFormat("dd/MM/yy", Locale.US)
+
+            time?.text = output.format(dates)
+
+            bugname?.text = issues[position].title
+            description?.text = issues[position].description
+            username?.text = issues[position].user?.name
+//           time?.text = issues[position].updated_at
+            severity?.text = issues[position].severity?.name
+            severity?.setBackgroundColor(Color.parseColor(issues[position].severity?.color))
+
 
         }
     }
@@ -138,8 +151,11 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun setLoading() {
         issues.add(
-        Issues(null, null, null, null, null, null, null, null,
-                   null, null))
+            Issues(
+                null, null, null, null, null, null, null, null,
+                null, null
+            )
+        )
         notifyItemInserted(issues.size - 1)
     }
 
