@@ -11,4 +11,7 @@ interface MySubmissionView {
     fun showData(submission: MutableList<Issues>)
     fun showsProject(projects: MutableList<Project>)
     fun showSeverity(severities: MutableList<Severity>)
+    fun addData(submission: MutableList<Issues>)
+    fun showEmptyAlert()
+    fun dataEnd()
 }

@@ -92,6 +92,7 @@ class IssuesActivity : BaseActivity(), IssuesView {
     }
 
     override fun showData(issues: MutableList<Issues>) {
+        Log.d("data_size", issues.size.toString())
         issuesData = issues
         adapter.setData(filterSeverity(issues))
         swipe_refresh?.isRefreshing = false
@@ -124,7 +125,6 @@ class IssuesActivity : BaseActivity(), IssuesView {
         }
 
     }
-
 
     private fun filterSeverity(severity: MutableList<Issues>): MutableList<Issues> {
         Log.d("filterSeverity", severity.toString())
@@ -279,7 +279,6 @@ class IssuesActivity : BaseActivity(), IssuesView {
 
 
     private fun initRecylerView() {
-//        card_recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = IssuesAdapter()
         layoutManager = LinearLayoutManager(mContext)
         card_recycler_view.layoutManager = layoutManager

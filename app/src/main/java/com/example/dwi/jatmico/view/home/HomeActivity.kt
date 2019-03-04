@@ -34,16 +34,18 @@ class HomeActivity : AppCompatActivity(), HomeView {
     override fun showingData(me: Me?) {
 
         name.text = me?.name
-        place.text = me?.location
-        Picasso.with(this).load(me?.image?.url).into(profile)
 
-        if (me?.image?.thumb?.url == null) {
-            profile.visibility = View.VISIBLE
-
+        if (me?.location !=null) {
+            place.text = me.location
         }else{
-            profile.visibility = View.VISIBLE
-            Picasso.with(this).load(me?.image?.url).into(profile)
+            place.text = "Alamat"
         }
+        if (me?.image?.url != null) {
+            Picasso.with(this).load(me.image.url).into(profile)
+        }else{
+            profile?.setImageResource(R.drawable.ic_person_black)
+        }
+
     }
 
     override fun showData(projects: MutableList<Project>) {

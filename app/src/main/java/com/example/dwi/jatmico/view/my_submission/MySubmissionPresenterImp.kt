@@ -13,40 +13,44 @@ class MySubmissionPresenterImp(private val sharedPreferences: SharedPreferences)
     private lateinit var view: MySubmissionView
     private var interactor: SubInteractor = SubInteractor(sharedPreferences)
     private var interactors: ProjectInteractor = ProjectInteractor(sharedPreferences)
-    private var interactorr: IsuesInteractor = IsuesInteractor(sharedPreferences)
     private var interactorry: SeverityInteractor = SeverityInteractor(sharedPreferences)
     private var disposables = CompositeDisposable()
 
 
-    override fun getIsues(project_id: Int , page : Int, per_page : Int) {
-        view.showLoading()
-        interactorr.getIsues(project_id, page , per_page)
-            .subscribeOn(Schedulers.io())
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe(
-                {
-                    view.dismissLoading()
-                    view.showData(it.isues)
-                },
-                {
-                    view.showErrorAlert(it)
-                    view.dismissLoading()
-                }
-            )?.let {
-                disposables.add(
-                    it
-            )
-            }
-    }
+
     override fun getSub (  page : Int,per_page : Int) {
-        view.showLoading()
+        if (page == 1) {
+            view.showLoading()
+        }
         interactor.getSub( page , per_page)
             .subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
-                    view.dismissLoading()
-                    view.showData(it.isues)
+                    if (page == 1) {
+                        view.dismissLoading()
+                        if (it.isues.size != 0) {
+                            if (it.isues.size >= per_page) {
+                                view.showData(it.isues)
+                            } else {
+                                view.showData(it.isues)
+                                view.dataEnd()
+                            }
+                        } else {
+                            view.showEmptyAlert()
+                        }
+                    } else {
+                        if (it.isues.size != 0) {
+                            if (it.isues.size >= per_page) {
+                                view.addData(it.isues)
+                            } else {
+                                view.addData(it.isues)
+                                view.dataEnd()
+                            }
+                        } else {
+                            view.dataEnd()
+                        }
+                    }
                 },
                 {
                     view.showErrorAlert(it)
@@ -55,7 +59,7 @@ class MySubmissionPresenterImp(private val sharedPreferences: SharedPreferences)
             )?.let {
                 disposables.add(
                     it
-            )
+                )
             }
     }
 

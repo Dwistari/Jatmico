@@ -93,7 +93,7 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
            username?.text = issues[position].user?.name
            time?.text = issues[position].updated_at
            severity?.text = issues[position].severity?.name
-//         severity?.setBackgroundColor(Color.parseColor(issues[position].severity?.color))
+           severity?.setBackgroundColor(Color.parseColor(issues[position].severity?.color))
 
         }
     }

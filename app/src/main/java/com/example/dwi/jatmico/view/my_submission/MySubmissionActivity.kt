@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -17,6 +19,7 @@ import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Issues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
+import com.example.dwi.jatmico.utils.OnScrollListener
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
 import com.squareup.picasso.Picasso
@@ -28,6 +31,18 @@ import kotlin.collections.ArrayList
 
 class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
+    private lateinit var adapter: MySubmissionAdapter
+    private lateinit var presenter: MySubmissionPresenter
+    var access_token = ""
+    private var position: Int? = null
+    private var project_id = 0
+    private var sub_id = 0
+    private var page = 1
+    private var per_page = 5
+    private var isDataEnd = false
+    private var isLoading = false
+    private var mContext: Context? = null
+    private var layoutManager: LinearLayoutManager? = null
     private var sortId: Int? = null
     private var severityId: Int? = null
     private var projectNames: MutableList<String>? = null
@@ -35,7 +50,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     private var severitiesNames: MutableList<String>? = ArrayList()
     private var submissionData: MutableList<Issues>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
-//    var myString = "Select Project"
 
 
     override fun showLoading() {
@@ -60,14 +74,28 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         swipe_refresh?.isRefreshing = false
     }
 
+    override fun addData(submission: MutableList<Issues>) {
+        adapter.hideLoading()
+        isLoading = false
+        adapter.addData(filterSeverity(submission))
+        adapter.addData(filterSubmission(submission))
+
+
+    }
+
+    override fun showEmptyAlert() {
+        Toast.makeText(this@MySubmissionActivity, "No issues found", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun dataEnd() {
+        isDataEnd = true
+    }
+
+
     //show severities data
     override fun showSeverity(severities: MutableList<Severity>) {
-
-        Log.d("SEVERITY DATA", severities.toString())
-
         this.severities?.addAll(severities)
         adapter.setSeverity(severities)
-
         severities.forEachIndexed { i, item ->
             if (i < 3) {
                 severitiesNames?.add(item.name)
@@ -78,19 +106,14 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
     override fun showsProject(projects: MutableList<Project>) {
 //        sortId = projects.get(0).id
-//        submissionData?.let { adapter.setData(filterSubmission(it)) }
         adapter.setProject(projects)
-
-//        projects.add(0, Project(-1, "Select Project",null,null,null))
 
         projectNames = ArrayList()
         for (project in projects) {
             projectNames?.add(project.name)
 
         }
-
-
-        val spinnerArrayAdapter = ProjectListAdapter (this@MySubmissionActivity , projects)
+        val spinnerArrayAdapter = ProjectListAdapter(this@MySubmissionActivity, projects)
         select_project.adapter = spinnerArrayAdapter
 
         select_project?.onItemSelectedListener =
@@ -113,8 +136,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                 }
             }
     }
-
-//--SPINNER--
 
     class ProjectListAdapter(private val ctx: Context, val projects: MutableList<Project>?) :
         ArrayAdapter<Project>(ctx, R.layout.spinner_item, R.id.item_spiner, projects) {
@@ -145,14 +166,13 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                     .with(row.context)
                     .load(projects?.get(position).image?.thumb?.url)
                     .into(row.icon_project)
-            } else{
-            row.icon_project.visibility = View.GONE
-        }
+            } else {
+                row.icon_project.visibility = View.GONE
+            }
 
             return row
         }
     }
-
 
 
     private fun filterSubmission(submission: MutableList<Issues>): MutableList<Issues> {
@@ -164,7 +184,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                 Log.d("filter", "sub id: ${it.id}")
 
                 if (sortId == it.projectId) {
-
                     filteredSubmission.add(it)
 
                     Log.d("tes submission", filteredSubmission.size.toString())
@@ -187,9 +206,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
                 Log.d("filter", "sev id: ${it.id}")
 
                 if (severityId == it.severity?.id) {
-
                     filterSeverity.add(it)
-
                     Log.d("tes Severity", filterSeverity.size.toString())
 
                 }
@@ -202,17 +219,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         }
     }
 
-    private lateinit var adapter: MySubmissionAdapter
-    private lateinit var presenter: MySubmissionPresenter
-
-    var access_token = ""
-    private var position: Int? = null
-    private var project_id = 0
-    private var sub_id = 0
-    private var page = 1
-    private var per_page = 20
-    private var isDataEnd = false
-    private var isLoading = false
 
     private fun refreshItem() {
         page = 1
@@ -235,7 +241,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
             access_token = sp.getString(getString(R.string.access_token), "")
 
         }
-
         presenter.getSub(page, per_page)
         presenter.getProjects(page, per_page)
         presenter.getSeverity()
@@ -361,20 +366,39 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
 
     private fun initRecylerView() {
-        card_recycler_view.layoutManager = LinearLayoutManager(this)
+//        card_recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = MySubmissionAdapter()
-        adapter.listener = object : MySubmissionAdapter.Listener {
+        layoutManager = LinearLayoutManager(mContext)
+        card_recycler_view.layoutManager = layoutManager
+        (card_recycler_view.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
+        card_recycler_view.addOnScrollListener(object : OnScrollListener(layoutManager) {
+            override fun loadMoreItem() {
+                isLoading = true
+                adapter.setLoading()
+                Handler().postDelayed({
+                    page += 1
+                    presenter.getSub(page, per_page)
+                }, 500)
+            }
 
+            override fun isDataEnd(): Boolean {
+                return isDataEnd
+            }
+
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
+        })
+
+        card_recycler_view.adapter = adapter
+        adapter.listener = object : MySubmissionAdapter.Listener {
             override fun onClickItem(submission: Issues, position: Int) {
                 val intent = Intent(this@MySubmissionActivity, DetailIssueActivity::class.java)
                 intent.putExtra("issue_id", submission.id)
                 intent.putExtra("position", position)
                 startActivityForResult(intent, 1)
-//                startActivity(intent)
-
             }
         }
-        card_recycler_view.adapter = adapter
     }
 
     private fun initPresenter() {
