@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.item_isues.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -90,20 +91,27 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             } else {
                 imageUser?.setImageResource(R.drawable.ic_profile)
             }
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+            val past = format.parse(issues[position].updated_at)
+            val now = Date()
+            val convert = SimpleDateFormat("MMM dd,yyyy", Locale.US)
 
-//            val sf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
+            val seconds = TimeUnit.MILLISECONDS.toSeconds(now.time - past.time)
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(now.time - past.time)
+            val hours = TimeUnit.MILLISECONDS.toHours(now.time - past.time)
+            val days = TimeUnit.MILLISECONDS.toDays(now.time - past.time)
 
-            val date = (issues[position].updated_at)
-            val input = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-            val dates = input.parse(date)
-            val output = SimpleDateFormat("dd/MM/yy", Locale.US)
-
-            time?.text = output.format(dates)
+            when {
+                seconds < 60 -> time?.text = (seconds.toString() + ""+ "sec ago")
+                minutes < 60 -> time?.text = (minutes.toString() + ""+ "min ago")
+                hours < 24 -> time?.text = (hours.toString()  + ""+"hours ago")
+//                hours > 24 && < 48 -> time?.text = (days.toString()  + "day ago")
+                else -> time?.text = convert.format(past)
+            }
 
             bugname?.text = issues[position].title
             description?.text = issues[position].description
             username?.text = issues[position].user?.name
-//           time?.text = issues[position].updated_at
             severity?.text = issues[position].severity?.name
             severity?.setBackgroundColor(Color.parseColor(issues[position].severity?.color))
 

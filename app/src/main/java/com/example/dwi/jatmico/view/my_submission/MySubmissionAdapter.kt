@@ -17,6 +17,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
+
 
 class MySubmissionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     
@@ -67,12 +69,12 @@ class MySubmissionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     inner class SubViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
-        val bugname = itemView?.findViewById<TextView>(R.id.bug_name)
-        val description = itemView?.findViewById<TextView>(R.id.descripsion)
-        val username = itemView?.findViewById<TextView>(R.id.name_user)
-        val imageUser = itemView?.findViewById<ImageView>(R.id.profile_user)
-        val time = itemView?.findViewById<TextView>(R.id.time)
-        val severity = itemView?.findViewById<Button>(R.id.severity)
+        private val bugname = itemView?.findViewById<TextView>(R.id.bug_name)
+        private val description = itemView?.findViewById<TextView>(R.id.descripsion)
+        private val username = itemView?.findViewById<TextView>(R.id.name_user)
+        private val imageUser = itemView?.findViewById<ImageView>(R.id.profile_user)
+        private val time = itemView?.findViewById<TextView>(R.id.time)
+        private val severity = itemView?.findViewById<Button>(R.id.severity)
 
         fun onBind(position: Int) {
             itemView.setOnClickListener {
@@ -84,12 +86,31 @@ class MySubmissionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }else{
                 imageUser?.setImageResource(R.drawable.ic_profile)
             }
-            val date = (submission[position].updated_at)
-            val input = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-            val dates = input.parse(date)
-            val output = SimpleDateFormat("dd/MMMM/yy", Locale.US)
 
-            time?.text = output.format(dates)
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+            val past = format.parse(submission[position].updated_at)
+            val now = Date()
+            val convert = SimpleDateFormat("MMM dd,yyyy", Locale.US)
+
+            val seconds = TimeUnit.MILLISECONDS.toSeconds(now.time - past.time)
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(now.time - past.time)
+            val hours = TimeUnit.MILLISECONDS.toHours(now.time - past.time)
+            val days = TimeUnit.MILLISECONDS.toDays(now.time - past.time)
+
+            when {
+                seconds < 60 -> time?.text = (seconds.toString() + ""+ "sec ago")
+                minutes < 60 -> time?.text = (minutes.toString() + ""+ "min ago")
+                hours < 24 -> time?.text = (hours.toString()  + ""+"hours ago")
+//                hours > 24 && < 48 -> time?.text = (days.toString()  + "day ago")
+                else -> time?.text = convert.format(past)
+            }
+
+
+//            val date = (submission[position].updated_at)
+//            val input = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+//            val dates = input.parse(date)
+//            val output = SimpleDateFormat("dd/MMMM/yy", Locale.US)
+//            time?.text = output.format(dates)
 
             bugname?.text = submission[position].title
             description?.text =submission[position].description
@@ -152,3 +173,4 @@ class MySubmissionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
 }
+

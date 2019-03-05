@@ -38,7 +38,7 @@ class HomeActivity : AppCompatActivity(), HomeView {
         if (me?.location !=null) {
             place.text = me.location
         }else{
-            place.text = "Alamat"
+            place.text = ("Alamat")
         }
         if (me?.image?.url != null) {
             Picasso.with(this).load(me.image.url).into(profile)
