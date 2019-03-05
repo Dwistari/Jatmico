@@ -20,6 +20,7 @@ import com.example.dwi.jatmico.data.models.Issues
 import com.example.dwi.jatmico.data.models.Project
 import com.example.dwi.jatmico.data.models.Severity
 import com.example.dwi.jatmico.utils.OnScrollListener
+import com.example.dwi.jatmico.view.BaseActivity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
 import com.squareup.picasso.Picasso
@@ -29,16 +30,16 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
+class MySubmissionActivity : BaseActivity(), MySubmissionView {
 
     private lateinit var adapter: MySubmissionAdapter
     private lateinit var presenter: MySubmissionPresenter
+
     var access_token = ""
     private var position: Int? = null
-    private var project_id = 0
     private var sub_id = 0
     private var page = 1
-    private var per_page = 5
+    private var per_page = 10
     private var isDataEnd = false
     private var isLoading = false
     private var mContext: Context? = null
@@ -51,6 +52,26 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
     private var submissionData: MutableList<Issues>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
 
+
+    override fun getLayout(): Int {
+        return R.layout.activity_my_submission
+    }
+
+    override fun onViewReady() {
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "My Submission"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        initPresenter()
+        initRecylerView()
+        position = intent.getIntExtra("position", 0)
+        presenter.getSub(page, per_page)
+        presenter.getProjects(page, per_page)
+        presenter.getSeverity()
+        swipe_refresh?.setOnRefreshListener {
+            refreshItem()
+        }
+
+    }
 
     override fun showLoading() {
         loading.visibility = View.VISIBLE
@@ -227,28 +248,7 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
         presenter.getSub(page, per_page)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_my_submission)
-        setSupportActionBar(toolbar)
-        supportActionBar?.title = "My Submission"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        initPresenter()
-        initRecylerView()
-        position = intent.getIntExtra("position", 0)
 
-        getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-            access_token = sp.getString(getString(R.string.access_token), "")
-
-        }
-        presenter.getSub(page, per_page)
-        presenter.getProjects(page, per_page)
-        presenter.getSeverity()
-        swipe_refresh?.setOnRefreshListener {
-            refreshItem()
-        }
-
-    }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
@@ -366,7 +366,6 @@ class MySubmissionActivity : AppCompatActivity(), MySubmissionView {
 
 
     private fun initRecylerView() {
-//        card_recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = MySubmissionAdapter()
         layoutManager = LinearLayoutManager(mContext)
         card_recycler_view.layoutManager = layoutManager

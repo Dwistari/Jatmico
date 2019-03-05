@@ -94,7 +94,7 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
             val past = format.parse(issues[position].updated_at)
             val now = Date()
-            val convert = SimpleDateFormat("MMM dd,yyyy", Locale.US)
+            val convert = SimpleDateFormat("MMM dd, yyyy", Locale.US)
 
             val seconds = TimeUnit.MILLISECONDS.toSeconds(now.time - past.time)
             val minutes = TimeUnit.MILLISECONDS.toMinutes(now.time - past.time)
@@ -104,7 +104,7 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             when {
                 seconds < 60 -> time?.text = (seconds.toString() + ""+ "sec ago")
                 minutes < 60 -> time?.text = (minutes.toString() + ""+ "min ago")
-                hours < 24 -> time?.text = (hours.toString()  + ""+"hours ago")
+                hours   < 24 -> time?.text = (hours.toString()   + ""+"hrs ago")
 //                hours > 24 && < 48 -> time?.text = (days.toString()  + "day ago")
                 else -> time?.text = convert.format(past)
             }
@@ -159,11 +159,8 @@ class IssuesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun setLoading() {
         issues.add(
-            Issues(
-                null, null, null, null, null, null, null, null,
-                null, null
-            )
-        )
+        Issues(null, null, null, null, null, null, null, null,
+                null, null))
         notifyItemInserted(issues.size - 1)
     }
 

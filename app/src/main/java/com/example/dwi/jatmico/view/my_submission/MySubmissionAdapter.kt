@@ -90,7 +90,7 @@ class MySubmissionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
             val past = format.parse(submission[position].updated_at)
             val now = Date()
-            val convert = SimpleDateFormat("MMM dd,yyyy", Locale.US)
+            val convert = SimpleDateFormat("MMM dd, yyyy", Locale.US)
 
             val seconds = TimeUnit.MILLISECONDS.toSeconds(now.time - past.time)
             val minutes = TimeUnit.MILLISECONDS.toMinutes(now.time - past.time)
@@ -100,17 +100,10 @@ class MySubmissionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             when {
                 seconds < 60 -> time?.text = (seconds.toString() + ""+ "sec ago")
                 minutes < 60 -> time?.text = (minutes.toString() + ""+ "min ago")
-                hours < 24 -> time?.text = (hours.toString()  + ""+"hours ago")
+                hours   < 24 -> time?.text = (hours.toString()   + ""+ "hrs ago")
 //                hours > 24 && < 48 -> time?.text = (days.toString()  + "day ago")
                 else -> time?.text = convert.format(past)
             }
-
-
-//            val date = (submission[position].updated_at)
-//            val input = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-//            val dates = input.parse(date)
-//            val output = SimpleDateFormat("dd/MMMM/yy", Locale.US)
-//            time?.text = output.format(dates)
 
             bugname?.text = submission[position].title
             description?.text =submission[position].description

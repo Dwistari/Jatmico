@@ -12,19 +12,23 @@ import android.widget.Toast
 import com.example.dwi.jatmico.R
 import com.example.dwi.jatmico.data.models.Detail
 import com.example.dwi.jatmico.view.create.CreateIssueActivity
-import com.example.dwi.jatmico.view.home.HomePresenter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail_issue.*
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
 
     private var isues_id = 0
     private var user_id = 0
+    private var isDataEnd = false
+    private var isLoading = false
     private var position: Int? = null
     private var issue: Detail? = null
     private var editMenu: MenuItem? = null
-    private var deleteMenu : MenuItem? = null
+    private var deleteMenu: MenuItem? = null
     private lateinit var issuePresenter: DetailIssuePresenter
 
     override fun dismissLoading() {
@@ -32,7 +36,6 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
     }
 
     override fun showLoading() {
-
         loadings.visibility = View.GONE
     }
 
@@ -44,20 +47,50 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
 
     override fun showingData(detail: Detail?) {
         issue = detail
+        user.text = detail?.user?.name
+        descripsion.text = detail?.description
 
         if (user_id != detail?.user?.id) {
             editMenu?.isVisible = false
             deleteMenu?.isVisible = false
         }
 
-        title_isues.text = detail?.title
-        user.text = detail?.user?.name
-        time.text = detail?.updated_at
-        descripsion.text = detail?.description
-        link.text = detail?.link
+        if (detail?.title != null) {
+            title_isues.text = detail.title
+        } else {
+            title_isues.text = ("No title available")
+        }
 
-        Picasso.with(this).load(detail?.image?.url).into(detail_image)
+        if (detail?.link != null) {
+            link.text = detail.link
+        } else {
+            link.text = ("no link available")
+        }
 
+        if (detail?.image?.url != null) {
+            Picasso.with(this).load(detail?.image?.url).into(detail_image)
+        } else {
+            detail_image?.setImageResource(R.drawable.no_image)
+        }
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+        val past = format.parse(detail?.updated_at)
+        val now = Date()
+        val convert = SimpleDateFormat("MMMM dd, yyyy", Locale.US)
+
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(now.time - past.time)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(now.time - past.time)
+        val hours = TimeUnit.MILLISECONDS.toHours(now.time - past.time)
+        val days = TimeUnit.MILLISECONDS.toDays(now.time - past.time)
+
+        when {
+            seconds < 60 -> time?.text = (seconds.toString() + "" + "sec ago")
+            minutes < 60 -> time?.text = (minutes.toString() + "" + "min ago")
+            hours < 24 -> time?.text = (hours.toString() + "" + "hrs ago")
+//                hours > 24 && < 48 -> time?.text = (days.toString()  + "day ago")
+            else -> time?.text = convert.format(past)
+        }
+        refresh?.isRefreshing = false
     }
 
     override fun onSuccess() {
@@ -77,14 +110,21 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
         isues_id = intent.getIntExtra("issue_id", isues_id)
         position = intent.getIntExtra("position", 0)
 
-
         getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
             issuePresenter.getDetail(isues_id, sp.getString(getString(R.string.access_token), "")!!)
-            user_id = sp.getInt("user_id",0)
+            user_id = sp.getInt("user_id", 0)
 
 
         }
+        refresh?.setOnRefreshListener {
+            refreshItem()
+        }
+    }
 
+    private fun refreshItem() {
+        isLoading = false
+        isDataEnd = false
+//        issuePresenter.getDetail(isues_id, sp.getString(getString(R.string.access_token), "")!!)
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -25,6 +25,7 @@
             android:id="@+id/tv_title"
             android:layout_below="@id/toolbarCreate"
             android:text="Title"
+            android:paddingLeft="10dp"
             android:textSize="24sp"
             android:background="#f3f3f3"
             android:layout_width="match_parent"
@@ -34,24 +35,27 @@
             android:layout_below="@id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="129dp"
-             android:background="#f3f3f3"/>
+            android:background="#f3f3f3"/>
 
     <TextView
             android:id="@+id/tv_desc"
-            android:text="Description"
+            android:text="@string/description"
+            android:paddingStart="10dp"
             android:layout_below="@id/input_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
     <EditText
             android:id="@+id/input_description"
-            android:layout_below="@id/input_title"
+            android:layout_below="@id/tv_desc"
             android:layout_width="match_parent"
+            android:paddingStart="10dp"
             android:layout_height="79dp"/>
 
     <TextView
             android:id="@+id/project"
             android:text="Project"
+            android:paddingStart="10dp"
             android:textSize="14sp"
             android:layout_marginTop="27dp"
             android:layout_below="@id/input_description"
@@ -81,6 +85,7 @@
             android:id="@+id/severity"
             android:text="Severity"
             android:textSize="14sp"
+            android:paddingStart="10dp"
             android:layout_marginTop="27dp"
             android:layout_below="@id/project"
             android:layout_width="wrap_content"
@@ -123,18 +128,17 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/radio_grup"
-            android:layout_alignEnd="@+id/project"/>
+            android:layout_marginStart="10dp"
+            android:layout_below="@+id/radio_grup"/>
 
     <EditText
             android:id="@+id/input_link"
-            android:hint="Insert link"
+            android:hint="@string/insert_link"
             android:textSize="12sp"
             android:layout_marginStart="50dp"
             android:layout_below="@id/radio_grup"
             android:layout_width="305dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="0dp"/>
+            android:layout_height="40dp"/>
 
 
     <ImageView
@@ -144,23 +148,25 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:layout_marginBottom="14dp"/>
 
     <TextView
             android:id="@+id/image_name"
-            android:hint="Insert image"
+            android:hint="@string/insert_image"
             android:textSize="12sp"
+            android:paddingTop="10dp"
             android:layout_marginStart="50dp"
             android:layout_below="@id/input_link"
             android:layout_width="305dp"
-            android:layout_height="40dp"/>
+            android:layout_height="wrap_content"/>
 
     <ImageView
             android:id="@+id/display_img"
             android:src="@mipmap/ic_launcher"
             android:layout_below="@id/upload_img"
-            android:layout_width="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginTop="10dp"
             android:layout_marginStart="100dp"
