@@ -90,7 +90,7 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
 //                hours > 24 && < 48 -> time?.text = (days.toString()  + "day ago")
             else -> time?.text = convert.format(past)
         }
-        refresh?.isRefreshing = false
+
     }
 
     override fun onSuccess() {
@@ -114,17 +114,8 @@ class DetailIssueActivity : AppCompatActivity(), DetailIssueView {
             issuePresenter.getDetail(isues_id, sp.getString(getString(R.string.access_token), "")!!)
             user_id = sp.getInt("user_id", 0)
 
-
         }
-        refresh?.setOnRefreshListener {
-            refreshItem()
-        }
-    }
 
-    private fun refreshItem() {
-        isLoading = false
-        isDataEnd = false
-//        issuePresenter.getDetail(isues_id, sp.getString(getString(R.string.access_token), "")!!)
     }
 
     override fun onSupportNavigateUp(): Boolean {

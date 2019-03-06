@@ -37,13 +37,18 @@ class SearchActivity : AppCompatActivity() , SearchView {
     override fun showData(search: MutableList<Search>) {
         Log.d("data_size", search.size.toString())
         adapter.setData(search)
+//        if (search != null) {
+//            adapter.setData(search)
+//        } else {
+//            tv_noView.text = ("Pencarian tidak ditemukan")
+//        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         initPresenter()
         initRecylerView()
         project_id = intent.getIntExtra("project_id", project_id)
@@ -51,17 +56,18 @@ class SearchActivity : AppCompatActivity() , SearchView {
 
         search_isues.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
-                    presenter.getSearch(
-                        query!!, project_id, page, per_page,
-                        sp.getString(getString(R.string.access_token), "")!!
-                    )
-                    presenter.getSearchSub(
-                        query!!, page, per_page,
-                        sp.getString(getString(R.string.access_token), "")!!
-                    )
+
+                    getSharedPreferences("Jatmico", MODE_PRIVATE).let { sp ->
+                        presenter.getSearch(
+                            query!!, project_id, page, per_page,
+                            sp.getString(getString(R.string.access_token), "")!!)
+                        presenter.getSearchSub(
+                            query!!, page, per_page,
+                            sp.getString(getString(R.string.access_token), "")!!)
 
                 }
+
+
                 return false
             }
 

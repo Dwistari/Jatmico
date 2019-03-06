@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:background="@color/white_three"
         tools:context=".view.isues.IssuesActivity"
         tools:ignore="MissingDefaultResource">
@@ -15,6 +16,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/deep_rose"
             android:elevation="4dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <android.support.v4.widget.SwipeRefreshLayout

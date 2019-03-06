@@ -6,7 +6,6 @@
         android:layout_height="match_parent"
         tools:context=".view.search.SearchActivity">
 
-
     <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -18,14 +17,20 @@
 
         <SearchView
                 android:id="@+id/search_isues"
-                android:gravity="center"
-                android:layout_width="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:iconifiedByDefault="false"
-                android:queryHint="Search"
-                android:layout_centerHorizontal="true" />
+                android:queryHint="Search"/>
 
     </android.support.v7.widget.Toolbar>
+
+    <TextView
+            android:id="@+id/tv_noView"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     <android.support.v7.widget.RecyclerView
             android:id="@+id/card_recycler_view"

@@ -90,16 +90,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#2566f2"
-            android:text="https://opinium.com"
+            android:text="@string/link"
             android:textSize="12sp"
             android:layout_marginTop="8dp"
             android:layout_toEndOf="@id/upload_link"/>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/refresh"
-            android:layout_below="@id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
 
 
 </RelativeLayout>

@@ -13,6 +13,9 @@
     <string name="insert_link">Insert link</string>
     <string name="insert_image">Insert image</string>
     <string name="description">Description</string>
+    <string name="link">https://opinium.com</string>
+    <string name="filter">Filter</string>
+    <string name="sort_by">Sort By</string>
 
 
     <string-array name="select_project">

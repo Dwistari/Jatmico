@@ -24,14 +24,16 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: SearchAdapter.SearchViewHolder, position: Int) {
-        holder.itemView.bug_name.text = search [position].title
-        holder.itemView.descripsion.text  = search [position].description
-        holder.itemView.name_user.text = search [position].user.name
-        holder.itemView.severity.text = search [position].severity.name
-        holder.itemView.time.text = search[position].updated_at
 
-        Picasso.with(holder.itemView?.getContext()).load(search[position].user.image.url)
-            .into(holder.itemView?.profile_user)
+            holder.itemView.bug_name.text = search [position].title
+            holder.itemView.descripsion.text  = search [position].description
+            holder.itemView.name_user.text = search [position].user.name
+            holder.itemView.severity.text = search [position].severity.name
+            holder.itemView.time.text = search[position].updated_at
+
+
+        Picasso.with(holder.itemView.getContext()).load(search[position].user.image.url)
+            .into(holder.itemView.profile_user)
 
 
         holder.itemView.setOnClickListener {
