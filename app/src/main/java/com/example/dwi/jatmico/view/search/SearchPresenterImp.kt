@@ -14,7 +14,7 @@ class SearchPresenterImp : SearchPresenter {
             ?.subscribe(
                 {
                     view?.dismissLoading()
-                    view?.showData(it.search)
+                    view?.showData(it.isues)
                 },
                 {
                     view?.showErrorAlert(it)
@@ -31,7 +31,7 @@ class SearchPresenterImp : SearchPresenter {
             ?.subscribe(
                 {
                     view?.dismissLoading()
-                    view?.showData(it.search)
+                    view?.showData(it.isues)
                 },
                 {
                     view?.showErrorAlert(it)

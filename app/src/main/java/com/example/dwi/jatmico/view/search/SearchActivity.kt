@@ -7,9 +7,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.dwi.jatmico.R
-import com.example.dwi.jatmico.data.models.Search
 import kotlinx.android.synthetic.main.activity_search.*
 import android.widget.SearchView.OnQueryTextListener
+import com.example.dwi.jatmico.data.models.Issues
 
 class SearchActivity : AppCompatActivity() , SearchView {
 
@@ -20,13 +20,15 @@ class SearchActivity : AppCompatActivity() , SearchView {
     private var sub_id = 0
     private var page = 1
     private var per_page = 10
+    private var isDataEnd = false
+    private var isLoading = false
 
     override fun showLoading() {
-        loading.visibility = View.VISIBLE
+        loadings.visibility = View.VISIBLE
     }
 
     override fun dismissLoading() {
-        loading.visibility = View.GONE
+        loadings.visibility = View.GONE
     }
 
     override fun showErrorAlert(it: Throwable) {
@@ -34,20 +36,25 @@ class SearchActivity : AppCompatActivity() , SearchView {
         Toast.makeText(this@SearchActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
     }
 
-    override fun showData(search: MutableList<Search>) {
+    override fun showData(search: MutableList<Issues>) {
         Log.d("data_size", search.size.toString())
-        adapter.setData(search)
-//        if (search != null) {
-//            adapter.setData(search)
-//        } else {
-//            tv_noView.text = ("Pencarian tidak ditemukan")
-//        }
+
+        if (search.size == 0) {
+            tv_noView.text = ("Pencarian tidak ditemukan")
+//            card_recycler_search?.visibility = View.INVISIBLE
+
+        } else {
+            adapter.setData(search)
+            tv_noView?.visibility = View.INVISIBLE
+//            refresh?.isRefreshing = false
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar_search)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         initPresenter()
         initRecylerView()
@@ -61,13 +68,12 @@ class SearchActivity : AppCompatActivity() , SearchView {
                         presenter.getSearch(
                             query!!, project_id, page, per_page,
                             sp.getString(getString(R.string.access_token), "")!!)
+
                         presenter.getSearchSub(
-                            query!!, page, per_page,
+                            query, page, per_page,
                             sp.getString(getString(R.string.access_token), "")!!)
 
                 }
-
-
                 return false
             }
 
@@ -77,6 +83,13 @@ class SearchActivity : AppCompatActivity() , SearchView {
         })
     }
 
+
+    private fun refreshItem() {
+        page = 1
+        isLoading = false
+        isDataEnd = false
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
@@ -84,9 +97,9 @@ class SearchActivity : AppCompatActivity() , SearchView {
 
 
     private fun initRecylerView() {
-        card_recycler_view.layoutManager = LinearLayoutManager(this)
+       card_recycler_search.layoutManager = LinearLayoutManager(this)
         adapter = SearchAdapter()
-        card_recycler_view.adapter = adapter
+        card_recycler_search.adapter = adapter
     }
 
     private fun initPresenter() {

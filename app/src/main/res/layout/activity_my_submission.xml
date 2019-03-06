@@ -8,7 +8,7 @@
         tools:context=".view.my_submission.MySubmissionActivity">
 
     <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar_search"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/deep_rose"
@@ -18,7 +18,7 @@
 
     <Spinner
             android:id="@+id/select_project"
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/toolbar_search"
             android:layout_width="match_parent"
             android:paddingLeft="20dp"
             android:layout_height="40dp"

@@ -5,8 +5,6 @@ import android.content.DialogInterface
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -58,7 +56,7 @@ class MySubmissionActivity : BaseActivity(), MySubmissionView {
     }
 
     override fun onViewReady() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar_search)
         supportActionBar?.title = "My Submission"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initPresenter()

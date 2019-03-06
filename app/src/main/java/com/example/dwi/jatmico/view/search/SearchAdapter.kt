@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.dwi.jatmico.R
-import com.example.dwi.jatmico.data.models.Search
+import com.example.dwi.jatmico.data.models.Issues
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_isues.view.*
 
 class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
-    private var search: MutableList<Search> = ArrayList()
+    private var search: MutableList<Issues> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SearchAdapter.SearchViewHolder {
         val itemView = LayoutInflater.from(parent?.context).inflate(R.layout.item_isues, parent, false)
@@ -27,12 +27,12 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
             holder.itemView.bug_name.text = search [position].title
             holder.itemView.descripsion.text  = search [position].description
-            holder.itemView.name_user.text = search [position].user.name
-            holder.itemView.severity.text = search [position].severity.name
+            holder.itemView.name_user.text = search [position].user?.name
+            holder.itemView.severity.text = search [position].severity?.name
             holder.itemView.time.text = search[position].updated_at
 
 
-        Picasso.with(holder.itemView.getContext()).load(search[position].user.image.url)
+        Picasso.with(holder.itemView.getContext()).load(search[position].user?.image?.url)
             .into(holder.itemView.profile_user)
 
 
@@ -48,7 +48,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
     }
 
 
-    fun setData(search: MutableList<Search>) {
+    fun setData(search: MutableList<Issues>) {
         this.search = search
         notifyDataSetChanged()
     }

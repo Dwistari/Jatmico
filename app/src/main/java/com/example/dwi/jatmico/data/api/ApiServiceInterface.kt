@@ -45,7 +45,7 @@ interface ApiServiceInterface {
         @Query("page") page: Int?,
         @Query("per_page") per_page: Int?
 
-    ): Observable<SearchResponse>
+    ): Observable<IsuesResponse>
 
     @GET("api/v1/me/search ")
     fun getSearchSub(
@@ -54,7 +54,7 @@ interface ApiServiceInterface {
         @Query("page") page: Int?,
         @Query("per_page") per_page: Int
 
-    ): Observable<SearchResponse>
+    ): Observable<IsuesResponse>
 
     @GET("api/v1/issues/{id} ")
     fun getDetail(

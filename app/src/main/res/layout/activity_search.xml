@@ -7,7 +7,7 @@
         tools:context=".view.search.SearchActivity">
 
     <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar_search"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/deep_rose"
@@ -32,14 +32,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/refresh"
+            android:layout_below="@id/toolbar_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/card_recycler_view"
-            android:layout_below="@id/toolbar"
+            android:id="@+id/card_recycler_search"
+            android:layout_below="@id/toolbar_search"
             android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+</android.support.v4.widget.SwipeRefreshLayout>
     <LinearLayout
-            android:id="@+id/loading"
+            android:id="@+id/loadings"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorPrimary"

@@ -1,11 +1,10 @@
 package com.example.dwi.jatmico.view.isues
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -24,8 +23,6 @@ import com.example.dwi.jatmico.view.BaseActivity
 import com.example.dwi.jatmico.view.create.CreateIssueActivity
 import com.example.dwi.jatmico.view.detail_isues.DetailIssueActivity
 import com.example.dwi.jatmico.view.search.SearchActivity
-import kotlinx.android.synthetic.main.activity_create_issue.*
-import kotlinx.android.synthetic.main.activity_detail_issue.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -60,7 +57,7 @@ class IssuesActivity : BaseActivity(), IssuesView {
         supportActionBar?.title = project_name
         initPresenter()
         initRecylerView()
-        presenter.getSeverity ()
+        presenter.getSeverity()
         presenter.getProjects(page, per_page)
         swipe_refresh?.setOnRefreshListener {
             refreshItem()
@@ -129,7 +126,7 @@ class IssuesActivity : BaseActivity(), IssuesView {
     }
 
     private fun filterSeverity(severity: MutableList<Issues>): MutableList<Issues> {
-        Log.d("filterSeverity", severity.toString())
+        Log.d("filterSeverity", severity.size.toString())
 
         val filterSeverity: MutableList<Issues> = ArrayList()
         if (severityId != null) {
@@ -138,13 +135,20 @@ class IssuesActivity : BaseActivity(), IssuesView {
                 Log.d("filter", "sev id: ${it.id}")
 
                 if (severityId == it.severity?.id) {
-
                     filterSeverity.add(it)
-
                     Log.d("tes Severity", filterSeverity.size.toString())
 
                 }
-
+                else if (filterSeverity.size == 0) {
+                    tv_noView.text = ("Data tidak tersedia")
+                }
+                else if (filterSeverity.size != 0) {
+                    tv_noView.visibility = View.INVISIBLE
+                }
+                else {
+                    return filterSeverity
+                }
+//
             }
             return filterSeverity
         } else {
@@ -188,14 +192,20 @@ class IssuesActivity : BaseActivity(), IssuesView {
             val dialog: AlertDialog?
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Severity")
-            builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1, null)
+            builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1)
+            { dialog, i ->
+//                Toast.makeText(getApplicationContext(), severitiesNames?[i], Toast.LENGTH_SHORT).show();
 
+//                val lv = ((AlertDialog)dialog).getListView()
+//                val selected = lv.getTag()
+
+
+            }
 
             builder.setPositiveButton("OK") { dialog, _ ->
+
                 severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
-
                 issuesData?.let { adapter.setData(filterSeverity(it)) }
-
             }
 
             builder.setNegativeButton("CANCEL") { dialog, _ ->
@@ -205,6 +215,9 @@ class IssuesActivity : BaseActivity(), IssuesView {
             dialog = builder.create()
             dialog?.show()
 
+//            if(selected == null){
+//                dialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = false
+//            }
         }
 
         if (id == R.id.sort_by) {
