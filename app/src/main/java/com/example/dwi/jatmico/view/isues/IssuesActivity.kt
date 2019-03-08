@@ -1,7 +1,6 @@
 package com.example.dwi.jatmico.view.isues
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -40,8 +39,9 @@ class IssuesActivity : BaseActivity(), IssuesView {
     private var mContext: Context? = null
     private var layoutManager: LinearLayoutManager? = null
     private var severityId: Int? = null
+    private var selected: Int? = null
     private var severities: MutableList<Severity>? = ArrayList()
-    private var severitiesNames: MutableList<String>? = ArrayList()
+    private var severitiesNames : MutableList<String> = ArrayList()
     private var issuesData: MutableList<Issues>? = null
     private var sort = arrayOf("New", "OLD", "Most Severe", "Less Severe")
 
@@ -116,6 +116,7 @@ class IssuesActivity : BaseActivity(), IssuesView {
     override fun showSeverity(severities: MutableList<Severity>) {
         this.severities?.addAll(severities)
         adapter.setSeverity(severities)
+//        severitiesNames = arrayOf("Default", severities[0].name, severities[1].name, severities[2].name )
 
         severities.forEachIndexed { i, item ->
             if (i < 3) {
@@ -138,14 +139,11 @@ class IssuesActivity : BaseActivity(), IssuesView {
                     filterSeverity.add(it)
                     Log.d("tes Severity", filterSeverity.size.toString())
 
-                }
-                else if (filterSeverity.size == 0) {
+                } else if (filterSeverity.size == 0) {
                     tv_noView.text = ("Data tidak tersedia")
-                }
-                else if (filterSeverity.size != 0) {
+                } else if (filterSeverity.size != 0) {
                     tv_noView.visibility = View.INVISIBLE
-                }
-                else {
+                } else {
                     return filterSeverity
                 }
 //
@@ -189,21 +187,16 @@ class IssuesActivity : BaseActivity(), IssuesView {
         }
         if (id == R.id.filter) {
             Log.d("SEVERITY", severitiesNames.toString())
-            val dialog: AlertDialog?
+            var alertDialog: AlertDialog? = null
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Severity")
-            builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1)
-            { dialog, i ->
-//                Toast.makeText(getApplicationContext(), severitiesNames?[i], Toast.LENGTH_SHORT).show();
-
-//                val lv = ((AlertDialog)dialog).getListView()
-//                val selected = lv.getTag()
-
-
+            builder.setSingleChoiceItems(severitiesNames.toTypedArray(), -1)
+            { dialog, which ->
+                alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
             }
 
-            builder.setPositiveButton("OK") { dialog, _ ->
-
+            builder.setPositiveButton("OK") { dialog, which ->
+                Log.d("DIALOG", "btn positive = $which")
                 severityId = severities?.get((dialog as AlertDialog).listView.checkedItemPosition)?.id
                 issuesData?.let { adapter.setData(filterSeverity(it)) }
             }
@@ -212,12 +205,11 @@ class IssuesActivity : BaseActivity(), IssuesView {
                 dialog.dismiss()
             }
 
-            dialog = builder.create()
-            dialog?.show()
 
-//            if(selected == null){
-//                dialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = false
-//            }
+            alertDialog = builder.create()
+            alertDialog?.show()
+            alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.isEnabled = false } ?: Log.d("DIALOG", "btn is null")
+
         }
 
         if (id == R.id.sort_by) {
