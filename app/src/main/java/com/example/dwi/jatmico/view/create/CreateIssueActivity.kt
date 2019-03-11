@@ -255,8 +255,7 @@ class CreateIssueActivity : AppCompatActivity(), CreateIssueView {
         btn_send.setOnClickListener(object : View.OnClickListener {
 
             override fun onClick(v: View?) {
-
-                //Edit issue
+//Update issue
                 if (issue != null) {
 
                     when (radio_grup.checkedRadioButtonId) {

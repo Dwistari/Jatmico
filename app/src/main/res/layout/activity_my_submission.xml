@@ -52,4 +52,10 @@
                 android:clipToPadding="false"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+    <TextView
+            android:id="@+id/tv_noViews"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 </RelativeLayout>

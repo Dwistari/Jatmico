@@ -146,7 +146,7 @@ class IssuesActivity : BaseActivity(), IssuesView {
                 } else {
                     return filterSeverity
                 }
-//
+
             }
             return filterSeverity
         } else {

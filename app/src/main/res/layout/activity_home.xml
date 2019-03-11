@@ -19,7 +19,7 @@
                 android:layout_width="96dp"
                 android:layout_height="96dp"
                 android:layout_marginTop="45dp"
-                android:src="@drawable/profil"
+                android:src="@drawable/ic_profile"
                 app:civ_border_width="1dp"
                 app:civ_border_color="#FFF"
                 android:layout_centerHorizontal="true"/>
@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:text="Kendall Jenner"
+                android:text="Username"
         android:layout_below="@id/profile"/>
 
         <LinearLayout

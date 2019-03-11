@@ -216,7 +216,7 @@ class MySubmissionActivity : BaseActivity(), MySubmissionView {
     }
 
     private fun filterSeverity(severity: MutableList<Issues>): MutableList<Issues> {
-        Log.d("filterSeverity", severity.toString())
+        Log.d("filterSeverity", severity.size.toString())
 
         val filterSeverity: MutableList<Issues> = ArrayList()
         if (severityId != null) {
@@ -224,12 +224,17 @@ class MySubmissionActivity : BaseActivity(), MySubmissionView {
             severity.forEach {
                 Log.d("filter", "sev id: ${it.id}")
 
-                if (severityId == it.severity?.id) {
+                if (severityId == it.severity?.id && sortId == it.projectId) {
                     filterSeverity.add(it)
                     Log.d("tes Severity", filterSeverity.size.toString())
 
+                } else if (filterSeverity.size == 0) {
+                    tv_noViews.text = ("Data tidak tersedia")
+                } else if (filterSeverity.size != 0) {
+                    tv_noViews.visibility = View.INVISIBLE
+                } else {
+                    return filterSeverity
                 }
-
             }
             return filterSeverity
         } else {
@@ -271,10 +276,13 @@ class MySubmissionActivity : BaseActivity(), MySubmissionView {
         }
         if (id == R.id.filter) {
             Log.d("SEVERITY", severitiesNames.toString())
-            val dialog: AlertDialog?
+            var alertDialog: AlertDialog? = null
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Severity")
-            builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1, null)
+            builder.setSingleChoiceItems(severitiesNames?.toTypedArray(), -1)
+            { dialog, which ->
+                alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
+            }
 
 
             builder.setPositiveButton("OK") { dialog, which ->
@@ -288,8 +296,9 @@ class MySubmissionActivity : BaseActivity(), MySubmissionView {
                 dialog.dismiss()
             }
 
-            dialog = builder.create()
-            dialog?.show()
+            alertDialog = builder.create()
+            alertDialog?.show()
+            alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.isEnabled = false } ?: Log.d("DIALOG", "btn is null")
 
         }
 
